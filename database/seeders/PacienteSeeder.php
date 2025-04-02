@@ -36,7 +36,6 @@ class PacienteSeeder extends Seeder
             Paciente::create([
                 'id_persona' => $persona->id,
                 'id_sede' => 1,
-                'grupo_sanguineo' => 'O+',
             ]);
 
             DB::commit();

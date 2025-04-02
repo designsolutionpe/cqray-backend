@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Database\QueryException;
 use App\Models\User;
+use App\Models\Persona;
 
 class UserController extends Controller
 {
@@ -13,6 +18,15 @@ class UserController extends Controller
     public function index()
     {
         return response()->json(User::with('persona')->get(), 200);
+    }
+
+    public function show($id)
+    {
+        $user = User::with('persona')->find($id);
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+        return response()->json($user, 200);
     }
 
     public function login(Request $request)
@@ -62,8 +76,6 @@ class UserController extends Controller
         }
     }
     
-    
-
     public function store(Request $request)
     {
         try {
@@ -151,6 +163,84 @@ class UserController extends Controller
         }
     }
 
+    public function updateUserAndPersona(Request $request, User $user)
+    {
+        DB::beginTransaction();
+        try {
+            $validatedUser = Validator::make($request->all(), [
+                'login' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('users', 'login')->ignore($user->id),
+                ],
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    'max:255',
+                    Rule::unique('users', 'email')->ignore($user->id),
+                ],
+                'password' => 'nullable|string|min:6',
+                'rol' => 'required|in:Superadministrador,Administrador,Doctor,Paciente',
+                'id_sede' => 'nullable|exists:sedes,id',
+            ])->validate();
+    
+            // Si viene contraseña, encriptarla; si no viene, remover
+            if ($request->filled('password')) {
+                $validatedUser['password'] = Hash::make($validatedUser['password']);
+            } else {
+                unset($validatedUser['password']);
+            }
+    
+            $user->update($validatedUser);
+    
+            $validatedPersona = Validator::make($request->all(), [
+                'nombre' => 'required|string|max:255',
+                'apellido' => 'required|string|max:255',
+                'email' => [
+                    'nullable',
+                    'email',
+                    'max:255',
+                    Rule::unique('personas', 'email')->ignore($user->persona->id),
+                ],
+                'foto' => 'nullable|file|image|max:2048',
+            ])->validate();
+    
+            // Eliminar la imagen anterior si existe
+            if ($user->persona->foto) {
+                if (Storage::exists($user->persona->foto)) {
+                    Storage::delete($user->persona->foto);
+                }
+                $validatedPersona['foto'] = null;
+            }
+    
+            // Subir y asignar la nueva foto (si existe)
+            if ($request->hasFile('foto')) {
+                $rutaImagen = $request->file('foto')->store('personas', 'public');
+                $validatedPersona['foto'] = $rutaImagen;
+            }
+    
+            $user->persona->update($validatedPersona);
+    
+            DB::commit();
+    
+            return response()->json([
+                'message' => 'Usuario y persona actualizados con éxito',
+                'data' => [
+                    'user' => $user,
+                    'persona' => $user->persona,
+                ],
+            ], 200);
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al actualizar el usuario/persona',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
 
     public function destroy(User $user)
     {

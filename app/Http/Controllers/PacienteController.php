@@ -60,7 +60,7 @@ class PacienteController extends Controller
             // Validar datos de paciente
             $validatedPaciente = $request->validate([
                 'id_sede' => 'required|exists:sedes,id',
-                'grupo_sanguineo' => 'nullable|in:O-,O+,A-,A+,B-,B+,AB-,AB+',
+                'historia_clinica' => 'nullable|integer',
                 'estado' => 'required|integer|in:0,1,2',
             ]);
 
@@ -127,7 +127,7 @@ class PacienteController extends Controller
             // Validar los datos del Paciente
             $validatedPaciente = Validator::make($request->all(), [
                 'id_sede' => 'required|exists:sedes,id',
-                'grupo_sanguineo' => 'nullable|in:O-,O+,A-,A+,B-,B+,AB-,AB+',
+                'historia_clinica' => 'nullable|integer',
                 'estado' => 'required|integer|in:0,1,2',
             ])->validate();
 

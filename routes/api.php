@@ -28,10 +28,13 @@ Route::put('/doctores/{doctor}', [DoctorController::class, 'update']);
 Route::delete('/doctores/{doctor}', [DoctorController::class, 'destroy']);
 
 Route::get('/usuarios', [UserController::class, 'index']);
+Route::get('/usuarios/{id}', [UserController::class, 'show']);
 Route::post('/usuarios', [UserController::class, 'store']);
 Route::put('/usuarios/{usuario}', [UserController::class, 'update']);
 Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy']);
 Route::post('/login', [UserController::class, 'login']);
+Route::put('/usuario-persona/{user}', [UserController::class, 'updateUserAndPersona']);
+
 
 Route::get('/personas/buscar', [PersonaController::class, 'searchPersonas']);
 

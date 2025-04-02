@@ -15,7 +15,7 @@ class Paciente extends Model
     protected $fillable = [
         'id_persona', 
         'id_sede', 
-        'grupo_sanguineo',
+        'historia_clinica',
         'estado'
     ];
 

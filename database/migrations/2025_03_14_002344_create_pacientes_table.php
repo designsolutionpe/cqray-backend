@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_persona')->constrained('personas')->onDelete('cascade');
             $table->foreignId('id_sede')->constrained('sedes')->onDelete('cascade');
-            $table->enum('grupo_sanguineo', ['O-', 'O+', 'A-', 'A+', 'B-', 'B+', 'AB-', 'AB+'])->nullable();
+            $table->integer('historia_clinica')->nullable();
             $table->tinyInteger('estado')->default(1); // 1: Activo, 0: Inactivo
             $table->timestamps();
         });
