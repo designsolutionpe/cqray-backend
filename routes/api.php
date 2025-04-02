@@ -7,6 +7,7 @@ use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\CitaController;
+use App\Http\Controllers\PagoController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -46,3 +47,9 @@ Route::get('/citas', [CitaController::class, 'index']);
 Route::post('/citas', [CitaController::class, 'store']);
 Route::put('/citas/{cita}', [CitaController::class, 'update']);
 Route::delete('/citas/{cita}', [CitaController::class, 'destroy']);
+
+Route::get('/pagos', [PagoController::class, 'index']);
+Route::post('/pagos', [PagoController::class, 'store']);
+Route::put('/pagos/{pago}', [PagoController::class, 'update']);
+Route::put('/pagos/{pago}/estado', [PagoController::class, 'cambiarEstado']);
+Route::delete('/pagos/{pago}', [PagoController::class, 'destroy']);
