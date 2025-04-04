@@ -4,21 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Persona;
-use App\Models\Sede;
 
-class Doctor extends Model
+class Quiropractico extends Model
 {
-    /** @use HasFactory<\Database\Factories\DoctorFactory> */
+    /** @use HasFactory<\Database\Factories\QuiropracticoFactory> */
     use HasFactory;
 
-    protected $table = 'doctores';
+    protected $table = 'quiropracticos';
 
     protected $fillable = [
         'id_persona', 
         'id_sede', 
         'numero_colegiatura',
-        'especialidad',
         'datos_contacto',
         'estado'
     ];

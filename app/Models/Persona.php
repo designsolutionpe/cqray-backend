@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Paciente;
-use App\Models\Doctor;
 use App\Models\User;
+use App\Models\Paciente;
+use App\Models\Quiropractico;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Persona extends Model
 {
@@ -42,10 +42,10 @@ class Persona extends Model
         return $this->hasOne(Paciente::class, 'id_persona');
     }
 
-    // Relación con Doctor
-    public function doctor()
+    // Relación con Quiropractico
+    public function quiropractico()
     {
-        return $this->hasOne(Doctor::class, 'id_persona');
+        return $this->hasOne(Quiropractico::class, 'id_persona');
     }
 
     public function user()

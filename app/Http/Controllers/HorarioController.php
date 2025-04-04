@@ -18,10 +18,10 @@ class HorarioController extends Controller
         //
     }
 
-    public function indexHorariosPorMedico($id_doctor)
+    public function indexHorariosPorMedico($id_quiropractico)
     {
         $horarios = Horario::with('detalleHorarios')
-            ->where('id_doctor', $id_doctor)
+            ->where('id_quiropractico', $id_quiropractico)
             ->orderBy('dia')
             ->get();
 
@@ -32,7 +32,7 @@ class HorarioController extends Controller
     {
 
         $fecha = $request->fecha;
-        $id_doctor = $request->id_doctor;
+        $id_quiropractico = $request->id_quiropractico;
         $dia = $request->dia;
         $idDetalle = $request->id_detalle_horario;
 
@@ -42,8 +42,8 @@ class HorarioController extends Controller
                 ->from('citas')
                 ->where('fecha_cita', $fecha);
         })
-        ->whereHas('horario', function ($query) use ($id_doctor, $dia) {
-            $query->where('id_doctor', $id_doctor)
+        ->whereHas('horario', function ($query) use ($id_quiropractico, $dia) {
+            $query->where('id_quiropractico', $id_quiropractico)
                   ->where('dia', $dia); // Filtrar por día
         });
 
@@ -60,7 +60,7 @@ class HorarioController extends Controller
     {
         // Validar
         $validatedData = $request->validate([
-            'id_doctor' => 'required|exists:doctores,id',
+            'id_quiropractico' => 'required|exists:quiropracticos,id',
             'horarios' => 'required|array',
             'horarios.*.dia' => 'required|integer|min:0|max:6',
             'horarios.*.hora_inicio' => 'nullable|date_format:H:i',
@@ -73,7 +73,7 @@ class HorarioController extends Controller
     
             // Si no hay datos, eliminar el horario existente
             if (empty($diaData['hora_inicio']) || empty($diaData['hora_fin']) || empty($diaData['duracion'])) {
-                Horario::where('id_doctor', $validatedData['id_doctor'])
+                Horario::where('id_quiropractico', $validatedData['id_quiropractico'])
                        ->where('dia', $dia)
                        ->delete();
                 continue;
@@ -82,7 +82,7 @@ class HorarioController extends Controller
             // Crear o actualizar
             $horario = Horario::updateOrCreate(
                 [
-                    'id_doctor' => $validatedData['id_doctor'],
+                    'id_quiropractico' => $validatedData['id_quiropractico'],
                     'dia' => $dia
                 ],
                 [

@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('horarios', function (Blueprint $table) {
+        Schema::create('estado_pacientes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_quiropractico')->constrained('quiropracticos')->onDelete('cascade');
-            $table->tinyInteger('dia'); // 0 = Lunes, 6 = Domingo
-            $table->time('hora_inicio');
-            $table->time('hora_fin');
-            $table->integer('duracion'); // En minutos
+            $table->string('nombre');
             $table->timestamps();
         });
     }
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('horarios');
+        Schema::dropIfExists('estado_pacientes');
     }
 };

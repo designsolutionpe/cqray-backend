@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Doctor;
 use App\Models\Persona;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use App\Models\Quiropractico;
 
-class DoctorController extends Controller
+class QuiropracticoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +14,7 @@ class DoctorController extends Controller
     public function index()
     {
         //
-        return response()->json(Doctor::with('persona', 'sede')->get(), 200);
+        return response()->json(Quiropractico::with('persona', 'sede')->get(), 200);
     }
 
     /**
@@ -57,34 +53,34 @@ class DoctorController extends Controller
         
             $persona = Persona::create($validatedPersona);
 
-            // Validar datos de doctor
-            $validatedDoctor = $request->validate([
+            // Validar datos de quiropractico
+            $validatedQuiropractico = $request->validate([
                 'id_sede' => 'required|exists:sedes,id',
-                'numero_colegiatura' => 'nullable|string|max:20|unique:doctores,numero_colegiatura',
+                'numero_colegiatura' => 'nullable|string|max:20|unique:quiropracticos,numero_colegiatura',
                 'especialidad' => 'nullable|string|max:255',
                 'datos_contacto' => 'nullable|string|max:255',
                 'estado' => 'required|integer|in:0,1,2',
             ]);
 
-            $validatedDoctor['id_persona'] = $persona->id;
-            $doctor = Doctor::create($validatedDoctor);
+            $validatedQuiropractico['id_persona'] = $persona->id;
+            $quiropractico = Quiropractico::create($validatedQuiropractico);
 
             DB::commit();
             return response()->json([
                 'persona' => $persona,
-                'doctor' => $doctor
+                'quiropractico' => $quiropractico
             ], 201);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Error al crear doctor: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al crear quiropractico: ' . $e->getMessage()], 500);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Doctor $doctor)
+    public function show(Quiropractico $quiropractico)
     {
         //
     }
@@ -92,7 +88,7 @@ class DoctorController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Doctor $doctor)
+    public function edit(Quiropractico $quiropractico)
     {
         //
     }
@@ -100,7 +96,7 @@ class DoctorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Doctor $doctor)
+    public function update(Request $request, Quiropractico $quiropractico)
     {
         DB::beginTransaction();
         try {
@@ -108,7 +104,7 @@ class DoctorController extends Controller
                 'tipo_documento' => 'required|in:' . implode(',', Persona::tipoDocumentos()),
                 'numero_documento' => [
                     'required', 'string', 'max:20',
-                    Rule::unique('personas', 'numero_documento')->ignore($doctor->persona->id),
+                    Rule::unique('personas', 'numero_documento')->ignore($quiropractico->persona->id),
                 ],
                 'nombre' => 'required|string|max:255',
                 'apellido' => 'required|string|max:255',
@@ -118,16 +114,16 @@ class DoctorController extends Controller
                 'telefono' => 'nullable|string|max:20',
                 'email' => [
                     'nullable', 'email', 'max:255',
-                    Rule::unique('personas', 'email')->ignore($doctor->persona->id),
+                    Rule::unique('personas', 'email')->ignore($quiropractico->persona->id),
                 ],
             ])->validate();
             
-            // Validar los datos del Doctor
-            $validatedDoctor = Validator::make($request->all(), [
+            // Validar los datos del Quiropractico
+            $validatedQuiropractico = Validator::make($request->all(), [
                 'id_sede' => 'required|exists:sedes,id',
                 'numero_colegiatura' => [
                     'nullable', 'string', 'max:20',
-                    Rule::unique('doctores', 'numero_colegiatura')->ignore($doctor->id),
+                    Rule::unique('quiropracticos', 'numero_colegiatura')->ignore($quiropractico->id),
                 ],
                 'especialidad' => 'nullable|string|max:255',
                 'datos_contacto' => 'nullable|string|max:255',
@@ -135,9 +131,9 @@ class DoctorController extends Controller
             ])->validate();
 
             // Eliminar la imagen
-            if ($doctor->persona->foto) {
-                if (Storage::exists($doctor->persona->foto)) {
-                    Storage::delete($doctor->persona->foto);
+            if ($quiropractico->persona->foto) {
+                if (Storage::exists($quiropractico->persona->foto)) {
+                    Storage::delete($quiropractico->persona->foto);
                 }
                 $validatedPersona['foto'] = null;
             }
@@ -149,20 +145,20 @@ class DoctorController extends Controller
             }
 
             // Actualizar persona
-            $doctor->persona->update($validatedPersona);
+            $quiropractico->persona->update($validatedPersona);
 
-            // Actualizar doctor
-            $doctor->update($validatedDoctor);
+            // Actualizar quiropractico
+            $quiropractico->update($validatedQuiropractico);
 
             DB::commit();
             return response()->json([
-                'persona' => $doctor->persona,
-                'doctor' => $doctor
+                'persona' => $quiropractico->persona,
+                'quiropractico' => $quiropractico
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'error' => 'Error al actualizar doctor: ' . $e->getMessage()
+                'error' => 'Error al actualizar quiropractico: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -170,24 +166,24 @@ class DoctorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Doctor $doctor)
+    public function destroy(Quiropractico $quiropractico)
     {
         DB::beginTransaction();
 
         try {
-            $persona = $doctor->persona;
+            $persona = $quiropractico->persona;
             if ($persona && $persona->foto) {
                 Storage::delete($persona->foto);
             }
-            $doctor->delete();
-            if ($persona && !$persona->doctor()->exists()) {
+            $quiropractico->delete();
+            if ($persona && !$persona->quiropractico()->exists()) {
                 $persona->delete();
             }
             DB::commit();
-            return response()->json(['message' => 'Doctor eliminado'], 200);
+            return response()->json(['message' => 'Quiropractico eliminado'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Error al eliminar doctor: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al eliminar quiropractico: ' . $e->getMessage()], 500);
         }
     }
 }

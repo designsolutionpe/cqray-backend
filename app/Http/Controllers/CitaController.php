@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Cita;
 use App\Models\Paciente;
-use App\Models\Doctor;
 use App\Models\DetalleHorario;
 use App\Models\Sede;
 use Illuminate\Http\Request;
@@ -21,7 +20,7 @@ class CitaController extends Controller
     {
         //
         return response()->json(
-            Cita::with('paciente.persona', 'doctor.persona', 'detalleHorario', 'sede')->get(),
+            Cita::with('paciente.persona', 'quiropractico.persona', 'detalleHorario', 'sede')->get(),
             200);
     }
 
@@ -45,12 +44,12 @@ class CitaController extends Controller
             // Validar los datos de la cita
             $validatedCita = $request->validate([
                 'id_paciente' => 'required|exists:pacientes,id',
-                'id_doctor' => 'required|exists:doctores,id',
+                'id_quiropractico' => 'required|exists:quiropracticos,id',
                 'id_detalle_horario' => 'required|exists:detalle_horarios,id',
                 'id_sede' => 'required|exists:sedes,id',
                 'fecha_cita' => 'required|date',
-                'estado' => 'required|integer|in:0,1,2,9', // Pendiente, Confirmado, Atendido, Cancelado
-                'tipo_paciente' => 'required|integer|in:1,2,3,4', // Nuevo, Reporte, Plan, Mantenimiento
+                'estado' => 'required|integer|exists:estado_citas,id', // Pendiente, Confirmado, Atendido, Cancelado
+                'tipo_paciente' => 'required|integer|exists:estado_pacientes,id', // Nuevo, Reporte, Plan, Mantenimiento
                 'observaciones' => 'nullable|string|max:255',
             ]);
 
@@ -97,7 +96,7 @@ class CitaController extends Controller
             // Validar los datos de la cita
             $validatedCita = $request->validate([
                 'id_paciente' => 'required|exists:pacientes,id',
-                'id_doctor' => 'required|exists:doctores,id',
+                'id_quiropractico' => 'required|exists:quiropracticos,id',
                 'id_detalle_horario' => 'required|exists:detalle_horarios,id',
                 'id_sede' => 'required|exists:sedes,id',
                 'fecha_cita' => 'required|date',

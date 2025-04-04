@@ -1,18 +1,36 @@
 <?php
 
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\SedeController;
-use App\Http\Controllers\PersonaController;
-use App\Http\Controllers\PacienteController;
-use App\Http\Controllers\DoctorController;
-use App\Http\Controllers\HorarioController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\PagoController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SedeController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\HorarioController;
+use App\Http\Controllers\PersonaController;
+use App\Http\Controllers\PacienteController;
+use App\Http\Controllers\EstadoCitaController;
+use App\Http\Controllers\QuiropracticoController;
+use App\Http\Controllers\EstadoPacienteController;
 
 
 //Route::get('/sedes', [SedeController::class, 'index']);
-Route::middleware('auth:sanctum')->get('/sedes', [SedeController::class, 'index']);
+// Route::middleware('auth:sanctum')->get('/sedes', [SedeController::class, 'index']);
+Route::post('/login', [UserController::class, 'login']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+  // Gestion de Sedes
+    Route::get('/sedes', [SedeController::class, 'index']);
+    
+    // Gestion de citas
+    Route::get('/citas/estados',[EstadoCitaController::class,'index']);
+    Route::get('/citas', [CitaController::class, 'index']);
+    Route::post('/citas', [CitaController::class, 'store']);
+
+  // Gestion de pacientes
+  Route::get('/pacientes/estados',[EstadoPacienteController::class,'index']);
+
+});
 
 Route::post('/sedes', [SedeController::class, 'store']);
 Route::put('/sedes/{sede}', [SedeController::class, 'update']);
@@ -23,17 +41,16 @@ Route::post('/pacientes', [PacienteController::class, 'store']);
 Route::put('/pacientes/{paciente}', [PacienteController::class, 'update']);
 Route::delete('/pacientes/{paciente}', [PacienteController::class, 'destroy']);
 
-Route::get('/doctores', [DoctorController::class, 'index']);
-Route::post('/doctores', [DoctorController::class, 'store']);
-Route::put('/doctores/{doctor}', [DoctorController::class, 'update']);
-Route::delete('/doctores/{doctor}', [DoctorController::class, 'destroy']);
+Route::get('/quiropracticos', [QuiropracticoController::class, 'index']);
+Route::post('/quiropracticos', [QuiropracticoController::class, 'store']);
+Route::put('/quiropracticos/{quiropractico}', [QuiropracticoController::class, 'update']);
+Route::delete('/quiropracticos/{quiropractico}', [QuiropracticoController::class, 'destroy']);
 
 Route::get('/usuarios', [UserController::class, 'index']);
 Route::get('/usuarios/{id}', [UserController::class, 'show']);
 Route::post('/usuarios', [UserController::class, 'store']);
 Route::put('/usuarios/{usuario}', [UserController::class, 'update']);
 Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy']);
-Route::post('/login', [UserController::class, 'login']);
 Route::put('/usuario-persona/{user}', [UserController::class, 'updateUserAndPersona']);
 
 
@@ -41,10 +58,8 @@ Route::get('/personas/buscar', [PersonaController::class, 'searchPersonas']);
 
 Route::get('/horarios/disponibles', [HorarioController::class, 'horariosDisponibles']);
 Route::post('/horarios/upsert', [HorarioController::class, 'upsertHorarios']);
-Route::get('/horarios/doctores/{id_doctor}', [HorarioController::class, 'indexHorariosPorMedico']);
+Route::get('/horarios/quiropracticos/{id_quiropractico}', [HorarioController::class, 'indexHorariosPorMedico']);
 
-Route::get('/citas', [CitaController::class, 'index']);
-Route::post('/citas', [CitaController::class, 'store']);
 Route::put('/citas/{cita}', [CitaController::class, 'update']);
 Route::delete('/citas/{cita}', [CitaController::class, 'destroy']);
 

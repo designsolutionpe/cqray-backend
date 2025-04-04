@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             // Relación con pacientes
             $table->foreignId('id_paciente')->constrained('pacientes')->onDelete('cascade');
-            // Relación con doctores
-            $table->foreignId('id_doctor')->constrained('doctores')->onDelete('cascade');
+            // Relación con quiropracticos
+            $table->foreignId('id_quiropractico')->constrained('quiropracticos')->onDelete('cascade');
             // Relación con detalles horarios
             $table->foreignId('id_detalle_horario')->constrained('detalle_horarios')->onDelete('cascade');
             // Relación con sede

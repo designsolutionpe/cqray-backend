@@ -127,9 +127,9 @@ class PersonaController extends Controller
      */
     public function destroy(Persona $persona)
     {
-        if ($persona->paciente || $persona->doctor) {
+        if ($persona->paciente || $persona->quiropractico) {
             return response()->json([
-                'error' => 'No se puede eliminar esta persona porque está asociada a un paciente o doctor.'
+                'error' => 'No se puede eliminar esta persona porque está asociada a un paciente o quiropractico.'
             ], 400);
         }
     

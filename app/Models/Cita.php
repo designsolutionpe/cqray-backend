@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Paciente;
-use App\Models\Doctor;
 use App\Models\Sede;
+use App\Models\Paciente;
+use App\Models\Quiropractico;
 use App\Models\DetalleHorario;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Cita extends Model
 {
@@ -18,7 +18,7 @@ class Cita extends Model
 
     protected $fillable = [
         'id_paciente', 
-        'id_doctor', 
+        'id_quiropractico', 
         'id_detalle_horario', 
         'id_sede', 
         'fecha_cita', 
@@ -34,9 +34,9 @@ class Cita extends Model
         return $this->belongsTo(Paciente::class, 'id_paciente');
     }
 
-    public function doctor()
+    public function quiropractico()
     {
-        return $this->belongsTo(Doctor::class, 'id_doctor');
+        return $this->belongsTo(Quiropractico::class, 'id_quiropractico');
     }
 
     public function detalleHorario()
@@ -47,6 +47,11 @@ class Cita extends Model
     public function sede()
     {
         return $this->belongsTo(Sede::class, 'id_sede');
+    }
+
+    public function estado()
+    {
+        return $this->belongsTo(EstadoCita::class,'estado');
     }
 
 }

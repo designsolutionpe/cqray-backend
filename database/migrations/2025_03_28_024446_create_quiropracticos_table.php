@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('doctores', function (Blueprint $table) {
+        Schema::create('quiropracticos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_persona')->constrained('personas')->onDelete('cascade');
             $table->foreignId('id_sede')->constrained('sedes')->onDelete('cascade');
             $table->string('numero_colegiatura')->unique()->nullable();
-            $table->string('especialidad')->nullable();
             $table->string('datos_contacto')->nullable();
             $table->tinyInteger('estado')->default(1); // 1: Activo, 0: Inactivo, 2: Vacaciones
             $table->timestamps();
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('doctores');
+        Schema::dropIfExists('quiropracticos');
     }
 };

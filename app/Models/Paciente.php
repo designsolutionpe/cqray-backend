@@ -34,6 +34,11 @@ class Paciente extends Model
         return $this->hasMany(Cita::class, 'id_paciente');
     }
 
+    public function estado()
+    {
+        return $this->belongsTo(EstadoPaciente::class,'estado');
+    }
+
     /*
     public function historias()
     {
