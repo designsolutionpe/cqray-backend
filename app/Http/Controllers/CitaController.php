@@ -20,7 +20,7 @@ class CitaController extends Controller
     {
         //
         return response()->json(
-            Cita::with('paciente.persona', 'quiropractico.persona', 'detalleHorario', 'sede')->get(),
+            Cita::with('paciente.persona','paciente.estado', 'quiropractico.persona', 'detalleHorario', 'sede','estado')->get(),
             200);
     }
 
