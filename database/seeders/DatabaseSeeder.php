@@ -9,6 +9,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\EstadoCitaSeeder;
 use Database\Seeders\QuiropracticoSeeder;
 use Database\Seeders\EstadoPacienteSeeder;
+use Database\Seeders\PersonaSeeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -25,6 +26,7 @@ class DatabaseSeeder extends Seeder
             PacienteSeeder::class,
             QuiropracticoSeeder::class,
             HorarioSeeder::class,
+            PersonaSeeder::class,
         ]);
         
         User::factory()->create([

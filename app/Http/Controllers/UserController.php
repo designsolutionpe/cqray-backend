@@ -84,7 +84,7 @@ class UserController extends Controller
                 'login' => 'required|string|max:255|unique:users',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:6',
-                'rol' => 'required|in:Superadministrador,Administrador,Quiropractico,Paciente',
+                'rol' => 'required|in:Superadministrador,Administrador,Quiropractico,Paciente,CallCenter',
                 'id_sede' => 'nullable|exists:sedes,id', // Verificar que el id_sede exista en la tabla sedes
                 'id_persona' => 'nullable|exists:personas,id', // Verificar que el id_persona exista en la tabla personas
             ]);
@@ -127,7 +127,7 @@ class UserController extends Controller
                 'login' => 'required|string|max:255|unique:users,login,' . $user->id, // Ignorar la validación para el login del usuario actual
                 'email' => 'required|string|email|max:255|unique:users,email,' . $user->id, // Ignorar la validación para el email del usuario actual
                 'password' => 'nullable|string|min:6', // La contraseña es opcional al actualizar
-                'rol' => 'required|in:Superadministrador,Administrador,Quiropractico,Paciente',
+                'rol' => 'required|in:Superadministrador,Administrador,Quiropractico,Paciente,CallCenter',
                 'id_sede' => 'nullable|exists:sedes,id', // Verificar que el id_sede exista en la tabla sedes
                 'id_persona' => 'nullable|exists:personas,id', // Verificar que el id_persona exista en la tabla personas
             ]);
@@ -182,7 +182,7 @@ class UserController extends Controller
                     Rule::unique('users', 'email')->ignore($user->id),
                 ],
                 'password' => 'nullable|string|min:6',
-                'rol' => 'required|in:Superadministrador,Administrador,Quiropractico,Paciente',
+                'rol' => 'required|in:Superadministrador,Administrador,Quiropractico,Paciente,CallCenter',
                 'id_sede' => 'nullable|exists:sedes,id',
             ])->validate();
     
