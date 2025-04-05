@@ -18,19 +18,23 @@ use App\Http\Controllers\EstadoPacienteController;
 Route::post('/login', [UserController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-
+  
   // Gestion de Sedes
-    Route::get('/sedes', [SedeController::class, 'index']);
-    
-    // Gestion de citas
-    Route::get('/citas/estados',[EstadoCitaController::class,'index']);
-    Route::get('/citas', [CitaController::class, 'index']);
-    Route::post('/citas', [CitaController::class, 'store']);
-
+  Route::get('/sedes', [SedeController::class, 'index']);
+  
+  // Gestion de citas
+  Route::get('/citas/estados',[EstadoCitaController::class,'index']);
+  Route::get('/citas', [CitaController::class, 'index']);
+  Route::post('/citas', [CitaController::class, 'store']);
+  Route::put('/citas/{cita}', [CitaController::class, 'update']);
+  Route::delete('/citas/{cita}', [CitaController::class, 'destroy']);
+  
   // Gestion de pacientes
   Route::get('/pacientes/estados',[EstadoPacienteController::class,'index']);
   Route::get('/pacientes', [PacienteController::class, 'index']);
-
+  
+  // Gestion de horarios
+  Route::get('/horarios/disponibles', [HorarioController::class, 'horariosDisponibles']);
 });
 
 Route::post('/sedes', [SedeController::class, 'store']);
@@ -56,12 +60,9 @@ Route::put('/usuario-persona/{user}', [UserController::class, 'updateUserAndPers
 
 Route::get('/personas/buscar', [PersonaController::class, 'searchPersonas']);
 
-Route::get('/horarios/disponibles', [HorarioController::class, 'horariosDisponibles']);
 Route::post('/horarios/upsert', [HorarioController::class, 'upsertHorarios']);
 Route::get('/horarios/quiropracticos/{id_quiropractico}', [HorarioController::class, 'indexHorariosPorMedico']);
 
-Route::put('/citas/{cita}', [CitaController::class, 'update']);
-Route::delete('/citas/{cita}', [CitaController::class, 'destroy']);
 
 Route::get('/pagos', [PagoController::class, 'index']);
 Route::post('/pagos', [PagoController::class, 'store']);

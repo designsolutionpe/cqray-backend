@@ -20,7 +20,7 @@ class CitaController extends Controller
     {
         //
         return response()->json(
-            Cita::with('paciente.persona','paciente.estado', 'quiropractico.persona', 'detalleHorario', 'sede','estado')->get(),
+            Cita::with('paciente.persona','paciente.estado', 'quiropractico.persona', 'detalleHorario', 'detalleHorario.horario', 'sede','estado','tipo_paciente')->get(),
             200);
     }
 
@@ -100,8 +100,8 @@ class CitaController extends Controller
                 'id_detalle_horario' => 'required|exists:detalle_horarios,id',
                 'id_sede' => 'required|exists:sedes,id',
                 'fecha_cita' => 'required|date',
-                'estado' => 'required|integer|in:0,1,2,9', // Pendiente, Confirmado, Atendido, Cancelado
-                'tipo_paciente' => 'required|integer|in:1,2,3,4', // Nuevo, Reporte, Plan, Mantenimiento
+                'estado' => 'required|integer|exists:estado_citas,id', // Pendiente, Confirmado, Atendido, Cancelado
+                'tipo_paciente' => 'required|integer|exists:estado_pacientes,id', // Nuevo, Reporte, Plan, Mantenimiento
                 'observaciones' => 'nullable|string|max:255',
             ]);
 

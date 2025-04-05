@@ -6,6 +6,7 @@ use App\Models\Sede;
 use App\Models\Paciente;
 use App\Models\Quiropractico;
 use App\Models\DetalleHorario;
+use App\Models\EstadoPaciente;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -52,6 +53,11 @@ class Cita extends Model
     public function estado()
     {
         return $this->belongsTo(EstadoCita::class,'estado');
+    }
+
+    public function tipo_paciente()
+    {
+        return $this->belongsTo(EstadoPaciente::class,'tipo_paciente');
     }
 
 }
