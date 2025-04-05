@@ -29,6 +29,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
   // Gestion de pacientes
   Route::get('/pacientes/estados',[EstadoPacienteController::class,'index']);
+  Route::get('/pacientes', [PacienteController::class, 'index']);
 
 });
 
@@ -36,7 +37,6 @@ Route::post('/sedes', [SedeController::class, 'store']);
 Route::put('/sedes/{sede}', [SedeController::class, 'update']);
 Route::delete('/sedes/{sede}', [SedeController::class, 'destroy']);
 
-Route::get('/pacientes', [PacienteController::class, 'index']);
 Route::post('/pacientes', [PacienteController::class, 'store']);
 Route::put('/pacientes/{paciente}', [PacienteController::class, 'update']);
 Route::delete('/pacientes/{paciente}', [PacienteController::class, 'destroy']);
