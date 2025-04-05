@@ -9,6 +9,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\EstadoCitaSeeder;
 use Database\Seeders\QuiropracticoSeeder;
 use Database\Seeders\EstadoPacienteSeeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -30,7 +31,8 @@ class DatabaseSeeder extends Seeder
             'login' => 'test',
             'email' => 'test@test.test',
             'rol' => 'Superadministrador',
-            'id_persona' => 1
+            'id_persona' => 1,
+            'password' => Hash::make('123456')
         ]);
     }
 }

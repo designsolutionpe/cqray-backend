@@ -17,7 +17,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('rol', ['Superadministrador', 'Administrador', 'Quiropráctico', 'Paciente'])->default('Paciente');
+            $table->enum('rol', [
+                'Superadministrador', 'Administrador', 
+                'Quiropráctico', 'Paciente',
+                'CallCenter'])->default('Paciente');
             $table->unsignedBigInteger('id_sede')->nullable();
             $table->unsignedBigInteger('id_persona')->nullable();
             $table->foreign('id_persona')->references('id')->on('personas')->onDelete('set null');            
