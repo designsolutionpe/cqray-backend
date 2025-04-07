@@ -11,6 +11,7 @@ use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\EstadoCitaController;
 use App\Http\Controllers\QuiropracticoController;
 use App\Http\Controllers\EstadoPacienteController;
+use App\Http\Controllers\ConfiguracionController;
 
 
 //Route::get('/sedes', [SedeController::class, 'index']);
@@ -35,6 +36,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
   
   // Gestion de horarios
   Route::get('/horarios/disponibles', [HorarioController::class, 'horariosDisponibles']);
+
+  // Configuracion
+  Route::get('/configuracion', [ConfiguracionController::class, 'index']);
+  Route::put('/configuracion/{configuracion}', [ConfiguracionController::class, 'update']);
 });
 
 Route::post('/sedes', [SedeController::class, 'store']);
