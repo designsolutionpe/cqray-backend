@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Persona;
 use Illuminate\Http\Request;
 use App\Models\Quiropractico;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class QuiropracticoController extends Controller
 {
@@ -57,7 +59,6 @@ class QuiropracticoController extends Controller
             $validatedQuiropractico = $request->validate([
                 'id_sede' => 'required|exists:sedes,id',
                 'numero_colegiatura' => 'nullable|string|max:20|unique:quiropracticos,numero_colegiatura',
-                'especialidad' => 'nullable|string|max:255',
                 'datos_contacto' => 'nullable|string|max:255',
                 'estado' => 'required|integer|in:0,1,2',
             ]);
