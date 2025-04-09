@@ -32,6 +32,8 @@ return new class extends Migration
             $table->time('hora_atencion')->nullable(); // Hora de atención
             $table->text('observaciones')->nullable(); // Observaciones
 
+            $table->foreignId('id_usuario')->constrained('users')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

@@ -6,6 +6,7 @@ use App\Models\Cita;
 use App\Models\Paciente;
 use App\Models\DetalleHorario;
 use App\Models\Sede;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -51,6 +52,7 @@ class CitaController extends Controller
                 'estado' => 'required|integer|exists:estado_citas,id', // Pendiente, Confirmado, Atendido, Cancelado
                 'tipo_paciente' => 'required|integer|exists:estado_pacientes,id', // Nuevo, Reporte, Plan, Mantenimiento
                 'observaciones' => 'nullable|string|max:255',
+                'id_usuario' => 'required|exists:users,id',
             ]);
 
             // Crear la cita
@@ -103,6 +105,7 @@ class CitaController extends Controller
                 'estado' => 'required|integer|exists:estado_citas,id', // Pendiente, Confirmado, Atendido, Cancelado
                 'tipo_paciente' => 'required|integer|exists:estado_pacientes,id', // Nuevo, Reporte, Plan, Mantenimiento
                 'observaciones' => 'nullable|string|max:255',
+                'id_usuario' => 'required|exists:users,id',
             ]);
 
             // Actualizar la cita
