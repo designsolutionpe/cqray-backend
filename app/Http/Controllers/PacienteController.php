@@ -61,7 +61,7 @@ class PacienteController extends Controller
             $validatedPaciente = $request->validate([
                 'id_sede' => 'required|exists:sedes,id',
                 'historia_clinica' => 'nullable|integer',
-                'estado' => 'required|integer|in:0,1,2',
+                'estado' => 'required|integer|exists:estado_pacientes,id',
             ]);
 
             // Crear paciente y asociarlo a la persona
