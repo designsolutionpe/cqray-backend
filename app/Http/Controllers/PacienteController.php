@@ -18,7 +18,7 @@ class PacienteController extends Controller
     public function index()
     {
         //
-        return response()->json(Paciente::with('persona', 'sede')->get(), 200);
+        return response()->json(Paciente::with('persona', 'sede','estado')->get(), 200);
     }
 
     /**
@@ -128,7 +128,7 @@ class PacienteController extends Controller
             $validatedPaciente = Validator::make($request->all(), [
                 'id_sede' => 'required|exists:sedes,id',
                 'historia_clinica' => 'nullable|integer',
-                'estado' => 'required|integer|in:0,1,2',
+                'estado' => 'required|integer|exists:estado_pacientes,id',
             ])->validate();
 
             // Eliminar la imagen anterior si existe
