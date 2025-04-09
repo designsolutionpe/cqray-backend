@@ -21,7 +21,7 @@ class CitaController extends Controller
     {
         //
         return response()->json(
-            Cita::with('paciente.persona','paciente.estado', 'quiropractico.persona', 'detalleHorario', 'detalleHorario.horario', 'sede','estado','tipo_paciente')->get(),
+            Cita::with('paciente.persona','paciente.estado', 'quiropractico.persona', 'sede','estado','tipo_paciente')->get(),
             200);
     }
 
@@ -45,10 +45,11 @@ class CitaController extends Controller
             // Validar los datos de la cita
             $validatedCita = $request->validate([
                 'id_paciente' => 'required|exists:pacientes,id',
-                'id_quiropractico' => 'required|exists:quiropracticos,id',
-                'id_detalle_horario' => 'required|exists:detalle_horarios,id',
+                //'id_quiropractico' => 'required|exists:quiropracticos,id',
+                //'id_detalle_horario' => 'nullable|exists:detalle_horarios,id',
                 'id_sede' => 'required|exists:sedes,id',
                 'fecha_cita' => 'required|date',
+                'hora_cita' => 'required|date_format:H:i',
                 'estado' => 'required|integer|exists:estado_citas,id', // Pendiente, Confirmado, Atendido, Cancelado
                 'tipo_paciente' => 'required|integer|exists:estado_pacientes,id', // Nuevo, Reporte, Plan, Mantenimiento
                 'observaciones' => 'nullable|string|max:255',
@@ -98,10 +99,11 @@ class CitaController extends Controller
             // Validar los datos de la cita
             $validatedCita = $request->validate([
                 'id_paciente' => 'required|exists:pacientes,id',
-                'id_quiropractico' => 'required|exists:quiropracticos,id',
-                'id_detalle_horario' => 'required|exists:detalle_horarios,id',
+                //'id_quiropractico' => 'required|exists:quiropracticos,id',
+                //'id_detalle_horario' => 'required|exists:detalle_horarios,id',
                 'id_sede' => 'required|exists:sedes,id',
                 'fecha_cita' => 'required|date',
+                'hora_cita' => 'required|date_format:H:i',
                 'estado' => 'required|integer|exists:estado_citas,id', // Pendiente, Confirmado, Atendido, Cancelado
                 'tipo_paciente' => 'required|integer|exists:estado_pacientes,id', // Nuevo, Reporte, Plan, Mantenimiento
                 'observaciones' => 'nullable|string|max:255',

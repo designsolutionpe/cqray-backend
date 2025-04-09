@@ -16,14 +16,15 @@ return new class extends Migration
             // Relación con pacientes
             $table->foreignId('id_paciente')->constrained('pacientes')->onDelete('cascade');
             // Relación con quiropracticos
-            $table->foreignId('id_quiropractico')->constrained('quiropracticos')->onDelete('cascade');
+            //$table->foreignId('id_quiropractico')->constrained('quiropracticos')->onDelete('cascade');
             // Relación con detalles horarios
-            $table->foreignId('id_detalle_horario')->constrained('detalle_horarios')->onDelete('cascade');
+            //$table->foreignId('id_detalle_horario')->constrained('detalle_horarios')->onDelete('cascade');
             // Relación con sede
             $table->foreignId('id_sede')->constrained('sedes')->onDelete('cascade');
         
             // Campos adicionales
             $table->date('fecha_cita'); // Solo la fecha (sin hora)
+            $table->time('hora_cita');
             $table->tinyInteger('estado')->default(0); // 0 - Pendiente, 1 - Confirmado, 2 - Atendido, 9 - Cancelado
             $table->tinyInteger('tipo_paciente')->default(1); // 1 - Nuevo, 2 - Reporte, 3 - Plan, 4 - Mantenimiento
 

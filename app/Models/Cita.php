@@ -20,10 +20,11 @@ class Cita extends Model
 
     protected $fillable = [
         'id_paciente', 
-        'id_quiropractico', 
-        'id_detalle_horario', 
+        //'id_quiropractico', 
+        //'id_detalle_horario', 
         'id_sede', 
         'fecha_cita', 
+        'hora_cita',
         'estado', 
         'tipo_paciente', 
         'fecha_atencion', 
