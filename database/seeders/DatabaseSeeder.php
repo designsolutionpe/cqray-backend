@@ -24,8 +24,8 @@ class DatabaseSeeder extends Seeder
             EstadoPacienteSeeder::class,
             SedeSeeder::class,
             PacienteSeeder::class,
-            QuiropracticoSeeder::class,
-            HorarioSeeder::class,
+            // QuiropracticoSeeder::class,
+            // HorarioSeeder::class,
             PersonaSeeder::class,
         ]);
         

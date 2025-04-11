@@ -86,7 +86,17 @@ class PacienteController extends Controller
      */
     public function show(Paciente $paciente)
     {
-        //
+        DB::beginTransaction();
+        try
+        {
+            $obj = Paciente::with(['persona','sede','citas','estado'])->find($paciente)->first();
+            return response()->json($obj,200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(["error"=>"Error al obtener informacion del paciente: " . $e->getMessage()],500);
+        }
     }
 
     /**

@@ -33,6 +33,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   // Gestion de pacientes
   Route::get('/pacientes/estados',[EstadoPacienteController::class,'index']);
   Route::get('/pacientes', [PacienteController::class, 'index']);
+  Route::get('/pacientes/{paciente}',[PacienteController::class,'show']);
   
   // Gestion de horarios
   Route::get('/horarios/disponibles', [HorarioController::class, 'horariosDisponibles']);
