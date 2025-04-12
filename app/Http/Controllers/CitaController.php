@@ -25,6 +25,46 @@ class CitaController extends Controller
             200);
     }
 
+    public function indexByFechaYSede(Request $request)
+    {
+        // Obtener los parámetros de la solicitud
+        $fecha = $request->input('fecha'); // Parámetro obligatorio: fecha
+        $idSede = $request->input('id_sede'); // Parámetro opcional: id_sede
+    
+        // Iniciar la consulta
+        $query = DB::table('citas as c')
+            ->join('pacientes as p', 'c.id_paciente', '=', 'p.id')
+            ->join('personas as pe', 'p.id_persona', '=', 'pe.id')
+            ->join('estado_citas as ec', 'c.estado', '=', 'ec.id')
+            ->join('estado_pacientes as ep', 'c.tipo_paciente', '=', 'ep.id')
+            ->join('sedes as s', 'c.id_sede', '=', 's.id')
+            ->select(
+                'c.id',
+                'c.id_paciente',
+                'pe.apellido',
+                'pe.nombre as persona_nombre',  // Alias para evitar conflictos
+                'c.id_sede',
+                's.nombre as sede_nombre',       // Alias para evitar conflictos
+                'c.fecha_cita',
+                'c.hora_cita',
+                'c.estado',
+                'ec.nombre as estado_nombre',    // Alias para evitar conflictos
+                'c.tipo_paciente',
+                'ep.nombre as tipo_paciente_nombre' // Alias para evitar conflictos
+            )
+            ->whereYear('c.fecha_cita', $fecha);  // Filtrar por el año de la fecha proporcionada
+    
+        // Si el parámetro id_sede está presente, agregar el filtro de sede
+        $query->when($idSede, function($q) use ($idSede) {
+            return $q->where('c.id_sede', $idSede);
+        });
+    
+        // Ejecutar la consulta y obtener los resultados
+        $citas = $query->get();
+    
+        return response()->json($citas, 200);
+    }    
+
     /**
      * Show the form for creating a new resource.
      */
