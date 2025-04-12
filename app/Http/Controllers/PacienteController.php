@@ -89,7 +89,26 @@ class PacienteController extends Controller
         DB::beginTransaction();
         try
         {
-            $obj = Paciente::with(['persona','sede','citas','estado'])->find($paciente)->first();
+            $obj = $paciente->load(['persona','sede','citas','estado','citas.sede','citas.estado']);
+            
+            $paciente_created = [
+                "titulo" => "Paciente Creado",
+                "fecha" => $paciente->created_at
+            ];
+
+            $citas = $obj['citas']->toArray();
+
+            $citas_evento = array_map( function($e){
+                $sede = explode(' ',$e['sede']['nombre']);
+                return [
+                    "titulo" => "Cita",
+                    "fecha" => $e['created_at'],
+                    "atendido" => "Quiropractico - " . ($sede[1] ?? '')
+                ];
+            }, $citas);
+
+            $obj['events'] = array_merge([],[$paciente_created],$citas_evento);
+
             return response()->json($obj,200);
         }
         catch(\Exception $e)
