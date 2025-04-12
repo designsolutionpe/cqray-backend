@@ -9,9 +9,10 @@ use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\EstadoCitaController;
+use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\QuiropracticoController;
 use App\Http\Controllers\EstadoPacienteController;
-use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\CategoriaArticuloController;
 
 
 //Route::get('/sedes', [SedeController::class, 'index']);
@@ -40,6 +41,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
   
   // Gestion de horarios
   Route::get('/horarios/disponibles', [HorarioController::class, 'horariosDisponibles']);
+
+  // Gestion de Categorias Articulos
+  Route::get('/articulos/categorias',[CategoriaArticuloController::class,'index']);
+  Route::post('/articulos/categorias',[CategoriaArticuloController::class,'store']);
+  Route::put('/articulos/categorias/{categoriaArticulo}',[CategoriaArticuloController::class,'update']);
+  Route::delete('/articulos/categorias/{categoriaArticulo}',[CategoriaArticuloController::class,'destroy']);
 
   // Configuracion
   Route::get('/configuracion', [ConfiguracionController::class, 'index']);
