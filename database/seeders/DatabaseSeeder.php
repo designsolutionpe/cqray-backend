@@ -6,11 +6,13 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Persona;
 use Illuminate\Database\Seeder;
+use Database\Seeders\PersonaSeeder;
+use Illuminate\Support\Facades\Hash;
 use Database\Seeders\EstadoCitaSeeder;
 use Database\Seeders\QuiropracticoSeeder;
 use Database\Seeders\EstadoPacienteSeeder;
-use Database\Seeders\PersonaSeeder;
-use Illuminate\Support\Facades\Hash;
+use Database\Seeders\CategoriaArticuloSeeder;
+use Database\Seeders\UnidadMedidaArticuloSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,6 +29,8 @@ class DatabaseSeeder extends Seeder
             // QuiropracticoSeeder::class,
             // HorarioSeeder::class,
             PersonaSeeder::class,
+            UnidadMedidaArticuloSeeder::class,
+            CategoriaArticuloSeeder::class
         ]);
         
         User::factory()->create([
