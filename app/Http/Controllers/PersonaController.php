@@ -14,7 +14,13 @@ class PersonaController extends Controller
      */
     public function index()
     {
-        return response()->json(Persona::all(), 200);
+        $personas = Persona::whereNotIn('id', function ($query) {
+            $query->select('id_persona')->from('quiropracticos');
+        })->whereNotIn('id', function ($query) {
+            $query->select('id_persona')->from('pacientes');
+        })->get();
+    
+        return response()->json($personas, 200);
     }
 
     public function searchPersonas(Request $request)
