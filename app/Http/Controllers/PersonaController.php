@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Persona;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PersonaController extends Controller
 {
@@ -79,7 +80,13 @@ class PersonaController extends Controller
             'direccion' => 'nullable|string|max:255',
             'telefono' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255|unique:personas,email',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        if ($request->hasFile('foto')) {
+            $rutaImagen = $request->file('foto')->store('personas', 'public');
+            $validatedData['foto'] = $rutaImagen;
+        }
 
         $persona = Persona::create($validatedData);
         return response()->json($persona, 201);
@@ -118,6 +125,18 @@ class PersonaController extends Controller
             'email' => 'sometimes|nullable|email|max:255|unique:personas,email,' . $persona->id,
         ]);
 
+        if ($persona->foto){
+            if (Storage::exists($persona->foto)) {
+                Storage::delete($persona->foto);
+            }
+            $validatedData['foto'] = null;
+        }
+
+        if ($request->hasFile('foto')) {
+            $rutaImagen = $request->file('foto')->store('personas', 'public');
+            $validatedData['foto'] = $rutaImagen;
+        }
+
         $persona->update($validatedData);
         return response()->json($persona, 200);
     }
@@ -134,9 +153,12 @@ class PersonaController extends Controller
         }
     
         // Eliminar la persona
+        if ($persona->foto) {
+            if (Storage::exists($persona->foto)) {
+                Storage::delete($persona->foto);
+            }
+        }
         $persona->delete();
-    
-        // Respuesta exitosa con código 204 (No Content)
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Persona eliminada'], 200);
     }
 }

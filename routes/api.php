@@ -32,6 +32,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
   Route::get('/citas/fechas', [CitaController::class, 'indexByFechaYSede']);
 
+  // Personas
+  Route::get('/personas', [PersonaController::class, 'index']);
+  Route::post('/personas', [PersonaController::class, 'store']);
+  Route::put('/personas/{persona}', [PersonaController::class, 'update']);
+  Route::delete('/personas/{persona}', [PersonaController::class, 'destroy']);
   
   // Gestion de pacientes
   Route::get('/pacientes/estados',[EstadoPacienteController::class,'index']);
