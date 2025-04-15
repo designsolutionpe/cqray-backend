@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DetalleComprobante;
 use App\Models\Persona;
+use App\Models\Sede;
 
 class Comprobante extends Model
 {
@@ -13,7 +14,7 @@ class Comprobante extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tipo_comprobante', 'tipo', 'id_persona', 'serie', 'numero', 'fecha_emision',
+        'tipo_comprobante', 'id_sede','tipo', 'id_persona', 'serie', 'numero', 'fecha_emision',
         'moneda', 'tipo_cambio', 'igv', 'subtotal', 'monto_igv', 'descuento',
         'total', 'pago_cliente', 'vuelto'
     ];
@@ -26,5 +27,10 @@ class Comprobante extends Model
     public function persona()
     {
         return $this->belongsTo(Persona::class, 'id_persona');
+    }
+
+    public function sede()
+    {
+        return $this->belongsTo(Sede::class, 'id_sede');
     }
 }

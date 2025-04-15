@@ -15,6 +15,7 @@ use App\Http\Controllers\QuiropracticoController;
 use App\Http\Controllers\EstadoPacienteController;
 use App\Http\Controllers\CategoriaArticuloController;
 use App\Http\Controllers\UnidadMedidaArticuloController;
+use App\Http\Controllers\ComprobanteController;
 
 
 //Route::get('/sedes', [SedeController::class, 'index']);
@@ -67,6 +68,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
   // Configuracion
   Route::get('/configuracion', [ConfiguracionController::class, 'index']);
   Route::put('/configuracion/{configuracion}', [ConfiguracionController::class, 'update']);
+
+  // Comprobantes
+  Route::get('/comprobantes', [ComprobanteController::class, 'index']);
+  Route::post('/comprobantes', [ComprobanteController::class, 'store']);
+  Route::put('/comprobantes/{comprobante}', [ComprobanteController::class, 'update']);
+  Route::delete('/comprobantes/{comprobante}', [ComprobanteController::class, 'destroy']);
+
 });
 
 Route::post('/sedes', [SedeController::class, 'store']);

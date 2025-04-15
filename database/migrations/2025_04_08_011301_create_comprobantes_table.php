@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('comprobantes', function (Blueprint $table) {
             $table->id();
             $table->smallInteger('tipo_comprobante');
+            $table->foreignId('id_sede')->constrained('sedes')->onDelete('cascade');
             $table->smallInteger('tipo');
             $table->foreignId('id_persona')->constrained('personas')->onDelete('cascade');
             $table->string('serie');
