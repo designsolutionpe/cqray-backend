@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Comprobante;
-use App\Models\Item;
+use App\Models\Articulo;
 
 class DetalleComprobante extends Model
 {
@@ -13,7 +13,7 @@ class DetalleComprobante extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_comprobante', 'id_producto', 'cantidad', 'descuento', 'precio_unitario', 'total_producto'
+        'id_comprobante', 'id_articulo', 'cantidad', 'descuento', 'precio_unitario', 'total_producto'
     ];
 
     public function comprobante()
@@ -21,8 +21,8 @@ class DetalleComprobante extends Model
         return $this->belongsTo(Comprobante::class, 'id_comprobante');
     }
 
-    public function producto()
+    public function articulo()
     {
-        return $this->belongsTo(Item::class, 'id_producto');
+        return $this->belongsTo(Articulo::class, 'id_articulo');
     }
 }

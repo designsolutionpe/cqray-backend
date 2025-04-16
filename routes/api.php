@@ -55,6 +55,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('/articulos',[ArticuloController::class,'store']);
   Route::put('/articulos/{articulo}',[ArticuloController::class,'update']);
   Route::delete('/articulos/{articulo}',[ArticuloController::class,'destroy']);
+  Route::get('articulos/buscar', [ArticuloController::class, 'buscar']);
 
   // Gestion de Categorias Articulos
   Route::get('/articulos/categorias',[CategoriaArticuloController::class,'index']);

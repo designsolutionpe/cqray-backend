@@ -18,6 +18,21 @@ class ArticuloController extends Controller
         return response()->json($articulos,200);
     }
 
+    public function buscar(Request $request)
+    {
+        // Validación de los parámetros
+        $validated = $request->validate([
+            'id_sede' => 'required|integer',
+            'tipo_articulo' => 'required|integer|in:1,2', // 1: Producto, 2: Servicio
+        ]);
+
+        $articulos = Articulo::where('id_sede', $validated['id_sede'])
+                             ->where('tipo_articulo', $validated['tipo_articulo'])
+                             ->select('id', 'nombre', 'cantidad', 'precio_venta', 'precio_mayor', 'precio_distribuidor', 'precio_compra')
+                             ->get();
+
+        return response()->json($articulos, 200);
+    }
     /**
      * Show the form for creating a new resource.
      */

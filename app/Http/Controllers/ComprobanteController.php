@@ -59,7 +59,7 @@ class ComprobanteController extends Controller
                 'pago_cliente' => 'required|numeric',
                 'vuelto' => 'required|numeric',
                 'detalles' => 'required|array|min:1',
-                'detalles.*.id_producto' => 'required|exists:items,id',
+                'detalles.*.id_articulo' => 'required|exists:articulos,id',
                 'detalles.*.cantidad' => 'required|numeric|min:1',
                 'detalles.*.precio_unitario' => 'required|numeric',
                 'detalles.*.descuento' => 'nullable|numeric',
@@ -90,7 +90,7 @@ class ComprobanteController extends Controller
             foreach ($validatedComprobante['detalles'] as $detalle) {
                 DetalleComprobante::create([
                     'id_comprobante' => $comprobante->id,
-                    'id_producto' => $detalle['id_producto'],
+                    'id_articulo' => $detalle['id_articulo'],
                     'cantidad' => $detalle['cantidad'],
                     'precio_unitario' => $detalle['precio_unitario'],
                     'descuento' => $detalle['descuento'] ?? 0,
@@ -157,7 +157,7 @@ class ComprobanteController extends Controller
                 'pago_cliente' => 'required|numeric',
                 'vuelto' => 'required|numeric',
                 'detalles' => 'required|array|min:1',
-                'detalles.*.id_producto' => 'required|exists:items,id',
+                'detalles.*.id_articulo' => 'required|exists:articulos,id',
                 'detalles.*.cantidad' => 'required|numeric|min:1',
                 'detalles.*.precio_unitario' => 'required|numeric',
                 'detalles.*.descuento' => 'nullable|numeric',
@@ -191,7 +191,7 @@ class ComprobanteController extends Controller
             foreach ($validatedData['detalles'] as $detalle) {
                 DetalleComprobante::create([
                     'id_comprobante' => $comprobante->id,
-                    'id_producto' => $detalle['id_producto'],
+                    'id_articulo' => $detalle['id_articulo'],
                     'cantidad' => $detalle['cantidad'],
                     'precio_unitario' => $detalle['precio_unitario'],
                     'descuento' => $detalle['descuento'] ?? 0,
