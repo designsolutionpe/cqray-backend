@@ -44,13 +44,15 @@ class ComprobanteResource extends JsonResource
             'detalles' => $this->detalles->map(function ($detalle) {
                 return [
                     'id' => $detalle->id,
-                    'id_producto' => $detalle->id_producto,
+                    'id_articulo' => $detalle->id_articulo,
+                    'nombre_articulo' => $detalle->articulo ? $detalle->articulo->nombre : null,
                     'cantidad' => $detalle->cantidad,
                     'descuento' => $detalle->descuento,
                     'precio_unitario' => $detalle->precio_unitario,
                     'total_producto' => $detalle->total_producto,
                 ];
             }),
+
         ];
     }
 }
