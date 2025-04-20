@@ -82,6 +82,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::delete('/comprobantes/{comprobante}', [ComprobanteController::class, 'destroy']);
 
   Route::get('/pacientes/{persona}/comprobantes',[PersonaController::class,'getVouchers']);
+  // Notas de Crédito
+  Route::get('/notas-creditos', [NotaCreditoController::class, 'index']);
+  Route::post('/notas-creditos', [NotaCreditoController::class, 'store']);
+  Route::put('/notas-creditos/{notaCredito}', [NotaCreditoController::class, 'update']);
+  Route::delete('/notas-creditos/{notaCredito}', [NotaCreditoController::class, 'destroy']);
 
 });
 
