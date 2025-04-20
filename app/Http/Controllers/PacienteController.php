@@ -18,7 +18,7 @@ class PacienteController extends Controller
     public function index()
     {
         //
-        return response()->json(Paciente::with('persona', 'sede','estado')->get(), 200);
+        return response()->json(Paciente::with('persona', 'sede','estado','persona.comprobantes','historial_clinico','historial_clinico.paquete')->get(), 200);
     }
 
     /**
@@ -89,7 +89,7 @@ class PacienteController extends Controller
         DB::beginTransaction();
         try
         {
-            $obj = $paciente->load(['persona','sede','citas','estado','citas.sede','citas.estado']);
+            $obj = $paciente->load(['persona','persona.comprobantes','historial_clinico','historial_clinico.sede','historial_clinico.paquete','sede','citas','estado','citas.sede','citas.estado']);
             
             $paciente_created = [
                 "titulo" => "Paciente Creado",

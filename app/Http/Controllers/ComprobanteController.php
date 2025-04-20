@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ComprobanteResource;
+use App\Models\Articulo;
+use App\Models\Paciente;
 use App\Models\Comprobante;
-use App\Models\DetalleComprobante;
 use Illuminate\Http\Request;
+use App\Models\HistoriaClinica;
+use App\Models\DetalleComprobante;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\ComprobanteResource;
 
 class ComprobanteController extends Controller
 {
@@ -86,6 +89,28 @@ class ComprobanteController extends Controller
                 'vuelto' => $validatedComprobante['vuelto'],
             ]);
     
+            $paciente = Paciente::find($validatedComprobante['id_persona'])->first();
+            \Log::info('check paciente',['paciente'=>$paciente]);
+
+            // Define si los historiales clinicos se pagaron o
+            // estan a deuda
+            $estado_pago = 0;
+
+            if( $validatedComprobante['vuelto'] < 0 )
+                $estado_pago = 2;
+            else if( $validatedComprobante['vuelto'] >= 0 )
+                $estado_pago = 1;
+
+            $historial_paciente = HistoriaClinica::where('id_paciente',$paciente->id)->first();
+            $no_hay_activo = 1;
+            
+            // Verifica que no haya algun paquete activo
+            // si lo hay, los siguientes paquetes desactivarlos
+            // se vuelven a activar una vez terminadas las
+            // sesiones del paquete actualmente activo
+            if( $historial_paciente && $historial_paciente->activo )
+                $no_hay_activo = 0;
+
             // Crear detalles
             foreach ($validatedComprobante['detalles'] as $detalle) {
                 DetalleComprobante::create([
@@ -96,6 +121,52 @@ class ComprobanteController extends Controller
                     'descuento' => $detalle['descuento'] ?? 0,
                     'total_producto' => $detalle['total_producto'],
                 ]);
+
+                // Verificar si el comprobante es un servicio o un producto
+                // SOLO SE ACEPTAN SERVICIOS
+                // Esto generara historias clinicas
+                if( $validatedComprobante['tipo'] == '2' )
+                {
+                    // Crear historial clinicas
+                    $articulo = Articulo::find($detalle['id_articulo']);
+
+                    for($i = 0; $i < $articulo['cantidad'];$i++)
+                    {
+                        HistoriaClinica::create([
+                            'id_paciente' => $paciente->id,
+                            'id_sede' => $validatedComprobante['id_sede'],
+                            'id_estado_cita' => 1,
+                            'id_articulo' => $articulo->id,
+                            'estado_pago' => $estado_pago,
+                            'activo' => $no_hay_activo
+                        ]);
+                    }
+
+                    // Actualiza el estado del paciente
+                    switch($paciente->estado)
+                    {
+                        case 1: // Si es Nuevo
+                        case 2: // Si es Reporte
+                            $nuevo_estado = strtolower($articulo->nombre);
+                            if(str_contains($nuevo_estado,'individual'))
+                                $paciente['estado'] = 5;
+                            elseif(str_contains($nuevo_estado,'plan'))
+                                $paciente['estado'] = 3; // Cambia a Plan
+                            break;
+                        /**
+                         * SOLO ACTUALIZAR ESTADOS NUEVOS PARA EVITAR QUE UN
+                         * ESTADO PLAN PASE A MANTENIMIENTO A MENOS QUE
+                         * HAYA LLEGADO A SU CITA DE MANTENIMIENTO
+                         */
+                        // case 3: // Si es Plan
+                        // case 5: // Si es Individual
+                        //     $paciente['estado'] = 4; // Cambia a Mantenimiento
+                        //     break;
+                    }
+                    
+                    $paciente->update();
+                }
+
             }
     
             DB::commit();

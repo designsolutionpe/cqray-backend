@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Paciente;
+use App\Models\Comprobante;
 use App\Models\Quiropractico;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -51,5 +52,10 @@ class Persona extends Model
     public function user()
     {
         return $this->hasOne(User::class, 'id_persona');
+    }
+
+    public function comprobantes()
+    {
+        return $this->hasMany(Comprobante::class,'id_persona');
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->smallInteger('tipo_comprobante');
             $table->foreignId('id_sede')->constrained('sedes')->onDelete('cascade');
-            $table->smallInteger('tipo');
+            $table->smallInteger('tipo'); // TIPO ARTICULO (1 producto 2 servicio)
             $table->foreignId('id_persona')->constrained('personas')->onDelete('cascade');
             $table->string('serie');
             $table->string('numero');

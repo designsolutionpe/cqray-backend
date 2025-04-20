@@ -8,6 +8,7 @@ use App\Models\Persona;
 use Illuminate\Database\Seeder;
 use Database\Seeders\PersonaSeeder;
 use Illuminate\Support\Facades\Hash;
+use Database\Seeders\ArticulosSeeder;
 use Database\Seeders\EstadoCitaSeeder;
 use Database\Seeders\QuiropracticoSeeder;
 use Database\Seeders\EstadoPacienteSeeder;
@@ -30,7 +31,8 @@ class DatabaseSeeder extends Seeder
             // HorarioSeeder::class,
             PersonaSeeder::class,
             UnidadMedidaArticuloSeeder::class,
-            CategoriaArticuloSeeder::class
+            CategoriaArticuloSeeder::class,
+            ArticulosSeeder::class,
         ]);
         
         User::factory()->create([

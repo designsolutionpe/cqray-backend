@@ -38,6 +38,10 @@ return new class extends Migration
 
             $table->timestamps();
         });
+
+        Schema::table('detalle_comprobantes', function(Blueprint $table){
+            $table->foreignId('id_articulo')->constrained('articulos')->onDelete('restrict');
+        });
     }
 
     /**

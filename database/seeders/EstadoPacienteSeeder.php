@@ -14,20 +14,13 @@ class EstadoPacienteSeeder extends Seeder
     public function run(): void
     {
         //
-        EstadoPaciente::create([
-            'nombre'=>'Nuevo'
-        ]);
-
-        EstadoPaciente::create([
-            'nombre'=>'Reporte'
-        ]);
-
-        EstadoPaciente::create([
-            'nombre'=>'Plan'
-        ]);
-
-        EstadoPaciente::create([
-            'nombre'=>'Mantenimiento'
-        ]);
+        $estados = [
+            ['nombre' => 'Nuevo'],
+            ['nombre' => 'Reporte'],
+            ['nombre' => 'Plan'],
+            ['nombre' => 'Mantenimiento'],
+            ['nombre' => 'Individual'],
+        ];
+        EstadoPaciente::insert($estados);
     }
 }

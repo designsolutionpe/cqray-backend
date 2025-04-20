@@ -10,12 +10,13 @@ use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ArticuloController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\EstadoCitaController;
+use App\Http\Controllers\ComprobanteController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\QuiropracticoController;
 use App\Http\Controllers\EstadoPacienteController;
+use App\Http\Controllers\HistoriaClinicaController;
 use App\Http\Controllers\CategoriaArticuloController;
 use App\Http\Controllers\UnidadMedidaArticuloController;
-use App\Http\Controllers\ComprobanteController;
 
 
 //Route::get('/sedes', [SedeController::class, 'index']);
@@ -47,6 +48,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('/pacientes', [PacienteController::class, 'index']);
   Route::get('/pacientes/{paciente}',[PacienteController::class,'show']);
   
+  // Gestion de Historial Clinico
+  Route::get('/historias-clinicas',[HistoriaClinicaController::class,'index']);
+  Route::get('/pacientes/{paciente}/historial-clinico',[HistoriaClinicaController::class,'getHistoryByPatient']);
+
   // Gestion de horarios
   Route::get('/horarios/disponibles', [HorarioController::class, 'horariosDisponibles']);
 
@@ -75,6 +80,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('/comprobantes', [ComprobanteController::class, 'store']);
   Route::put('/comprobantes/{comprobante}', [ComprobanteController::class, 'update']);
   Route::delete('/comprobantes/{comprobante}', [ComprobanteController::class, 'destroy']);
+
+  Route::get('/pacientes/{persona}/comprobantes',[PersonaController::class,'getVouchers']);
 
 });
 

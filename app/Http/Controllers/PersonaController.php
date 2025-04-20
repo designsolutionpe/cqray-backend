@@ -64,6 +64,15 @@ class PersonaController extends Controller
     }
     
     /**
+     * Get all Vouchers
+     */
+    public function getVouchers(Persona $persona)
+    {
+        $vouchers = $persona->comprobantes()->get();
+        return response()->json($vouchers,200);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

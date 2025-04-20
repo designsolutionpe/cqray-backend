@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Persona;
 use App\Models\Sede;
+use App\Models\Persona;
+use App\Models\HistoriaClinica;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Paciente extends Model
 {
@@ -37,6 +38,11 @@ class Paciente extends Model
     public function estado()
     {
         return $this->belongsTo(EstadoPaciente::class,'estado');
+    }
+
+    public function historial_clinico()
+    {
+        return $this->hasMany(HistoriaClinica::class,'id_paciente');
     }
 
     /*
