@@ -89,7 +89,7 @@ class PacienteController extends Controller
         DB::beginTransaction();
         try
         {
-            $obj = $paciente->load(['persona','persona.comprobantes','historial_clinico','historial_clinico.sede','historial_clinico.paquete','sede','citas','estado','citas.sede','citas.estado']);
+            $obj = $paciente->load(['persona','persona.comprobantes','historial_clinico','historial_clinico.sede','historial_clinico.paquete','historial_clinico.cita','sede','citas','estado','citas.sede','citas.estado']);
             
             $paciente_created = [
                 "titulo" => "Paciente Creado",

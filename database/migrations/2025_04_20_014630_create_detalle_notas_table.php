@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('detalle_notas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_nota_credito')->constrained('notas_credito')->onDelete('cascade');
+            $table->foreignId('id_nota_credito')->constrained('nota_creditos')->onDelete('cascade');
             $table->foreignId('id_articulo')->constrained('articulos')->onDelete('restrict');
             $table->integer('cantidad');
             $table->decimal('descuento', 10, 2)->default(0);
