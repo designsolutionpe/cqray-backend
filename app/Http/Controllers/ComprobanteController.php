@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Articulo;
-use App\Models\Paciente;
-use App\Models\Comprobante;
-use Illuminate\Http\Request;
-use App\Models\HistoriaClinica;
-use App\Models\DetalleComprobante;
-use Illuminate\Support\Facades\DB;
 use App\Http\Resources\ComprobanteResource;
+use App\Models\Comprobante;
+use App\Models\DetalleComprobante;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ComprobanteController extends Controller
 {
@@ -18,7 +15,7 @@ class ComprobanteController extends Controller
      */
     public function index()
     {
-        $comprobantes = Comprobante::with(['persona', 'sede', 'detalles'])
+        $comprobantes = Comprobante::with(['persona', 'sede', 'detalles.articulo'])
         ->orderBy('fecha_emision', 'desc')
         ->get();
 
@@ -26,6 +23,50 @@ class ComprobanteController extends Controller
         ->response()
         ->setStatusCode(200);
     }
+
+    public function searchComprobantes(Request $request)
+    {
+        // Obtener los parámetros de búsqueda
+        $numero = $request->get('numero', null);
+        $serie = $request->get('serie', null);
+        $fechaInicio = $request->get('fecha_inicio', null);
+        $fechaFin = $request->get('fecha_fin', null);
+    
+        // Validar que al menos uno de los parámetros esté presente
+        // if (is_null($numero) && is_null($serie) && is_null($fechaInicio) && is_null($fechaFin)) {
+        if (is_null($numero) && is_null($serie)) {    
+            return response()->json([], 200); // Si todos los parámetros están vacíos, devolver lista vacía
+        }
+    
+        // Crear la consulta base
+        $query = Comprobante::with(['persona', 'sede', 'detalles.articulo']);
+    
+        // Filtrar por número de comprobante si se proporciona
+        if ($numero) {
+            $query->whereRaw('LOWER(numero) LIKE ?', ['%' . strtolower($numero) . '%']);
+        }
+    
+        // Filtrar por serie si se proporciona
+        if ($serie) {
+            $query->whereRaw('LOWER(serie) LIKE ?', ['%' . strtolower($serie) . '%']);
+        }
+    
+        // Filtrar por fecha de emisión si se proporcionan las fechas de inicio y fin
+        /*if ($fechaInicio && $fechaFin) {
+            $query->whereBetween('fecha_emision', [
+                \Carbon\Carbon::parse($fechaInicio)->startOfDay(),
+                \Carbon\Carbon::parse($fechaFin)->endOfDay()
+            ]);
+        }*/
+    
+        // Ejecutar la consulta y obtener los resultados
+        $comprobantes = $query->orderBy('fecha_emision', 'desc')->get();
+    
+        // Retornar los resultados con el recurso
+        return ComprobanteResource::collection($comprobantes)
+            ->response()
+            ->setStatusCode(200);
+    }    
 
     /**
      * Show the form for creating a new resource.
@@ -89,39 +130,6 @@ class ComprobanteController extends Controller
                 'vuelto' => $validatedComprobante['vuelto'],
             ]);
     
-            $paciente_exists = true;
-            $paciente = Paciente::where('id_persona',$validatedComprobante['id_persona'])->get()->first();
-
-            \Log::info('check paciente',['paciente'=>$paciente]);
-
-            if($paciente == null)
-                $paciente_exists = false;
-
-            if($paciente_exists)
-            {
-                // Define si los historiales clinicos se pagaron o
-                // estan a deuda
-                $estado_pago = 0;
-
-                if( $validatedComprobante['vuelto'] < 0 )
-                    $estado_pago = 2;
-                else if( $validatedComprobante['vuelto'] >= 0 )
-                    $estado_pago = 1;
-
-                $historial_paciente = HistoriaClinica::where([
-                    'id_paciente' => $paciente->id,
-                    'activo' => 1
-                ])->get();
-                $no_hay_activo = 1;
-                
-                // Verifica que no haya algun paquete activo
-                // si lo hay, los siguientes paquetes desactivarlos
-                // se vuelven a activar una vez terminadas las
-                // sesiones del paquete actualmente activo
-                if( $historial_paciente->count() > 0 )
-                    $no_hay_activo = 0;
-            }
-
             // Crear detalles
             foreach ($validatedComprobante['detalles'] as $detalle) {
                 DetalleComprobante::create([
@@ -132,31 +140,6 @@ class ComprobanteController extends Controller
                     'descuento' => $detalle['descuento'] ?? 0,
                     'total_producto' => $detalle['total_producto'],
                 ]);
-
-                // Verificar si el comprobante es un servicio o un producto
-                // SOLO SE ACEPTAN SERVICIOS
-                // Esto generara historias clinicas
-                if( $validatedComprobante['tipo'] == '2' && $paciente_exists )
-                {
-                    // Crear historial clinicas
-                    $articulo = Articulo::find($detalle['id_articulo']);
-
-                    // Genera uuid para agrupar las sesiones
-                    $uuid = bin2hex(random_bytes(16));
-
-                    for($i = 0; $i < $articulo['cantidad'];$i++)
-                    {
-                        HistoriaClinica::create([
-                            'id_paciente' => $paciente->id,
-                            'id_sede' => $validatedComprobante['id_sede'],
-                            'id_articulo' => $articulo->id,
-                            'estado_pago' => $estado_pago,
-                            'activo' => $no_hay_activo,
-                            'uuid' => $uuid
-                        ]);
-                    }
-                }
-
             }
     
             DB::commit();

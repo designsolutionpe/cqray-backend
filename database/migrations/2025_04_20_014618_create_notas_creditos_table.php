@@ -15,11 +15,16 @@ return new class extends Migration
             $table->id();
             $table->smallInteger('tipo_comprobante'); // Tipo de comprobante (1: boleta, 2: factura)
             $table->foreignId('id_sede')->constrained('sedes')->onDelete('cascade');
+            $table->smallInteger('tipo'); // TIPO ARTICULO (1 producto 2 servicio)
             $table->foreignId('id_comprobante')->constrained('comprobantes')->onDelete('cascade');
             $table->smallInteger('motivo'); 
             $table->text('comentario')->nullable(); // Campo de comentario para descripción adicional
+            $table->string('serie');
+            $table->string('numero');
             $table->date('fecha_emision');
             $table->enum('moneda', ['PEN', 'USD']);
+            $table->decimal('tipo_cambio', 10, 2)->nullable();
+            $table->boolean('igv')->default(false);
             $table->decimal('subtotal', 10, 2)->default(0);
             $table->decimal('monto_igv', 10, 2)->default(0);
             $table->decimal('descuento', 10, 2)->default(0);
