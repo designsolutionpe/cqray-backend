@@ -106,6 +106,7 @@ class CitaController extends Controller
             {
                 $sesion = HistoriaClinica::where([
                     'id_articulo' => $validatedCita['id_paquete'],
+                    'id_paciente' => $validatedCita['id_paciente'],
                     'id_cita' => null,
                     'activo' => 1,
                 ])->get()->first();
@@ -140,12 +141,14 @@ class CitaController extends Controller
             {
                 // Verifica si el paquete actual se desactiva o no
                 $historias = HistoriaClinica::with(['cita'])->where([
+                    'id_paciente' => $validatedCita['id_paciente'],
                     'activo' => 1
                 ])->get();
 
                 // Obtener paquetes no activas (si existen) para activarlas
                 // en caso las actuales seran desactivadas
                 $historias_no_activas = HistoriaClinica::with(['paquete'])->where([
+                    'id_paciente' => $validatedCita['id_paciente'],
                     'activo' => 0,
                     'id_cita' => null
                 ])->get();
@@ -159,7 +162,7 @@ class CitaController extends Controller
                     // Filtra las sesiones que ya han sido atendidas
                     $n_atendidos = $historias->filter(fn($h) => $h['cita'] != null ? $h['cita']['estado'] == 3 : false)->count();
 
-                    // \Log::info('Check cantidad = atendidos',['cantidad'=>$articulo->cantidad,'atendidos'=>$n_atendidos,'historias'=>$historias->filter(fn($h)=>$h['cita']['estado'] == 3)]);
+                    \Log::info('Check cantidad = atendidos',['cantidad'=>$articulo->cantidad,'atendidos'=>$n_atendidos,'historias'=>$historias->filter(fn($h) => $h['cita'] != null ? $h['cita']['estado'] == 3 : false)]);
                     // Si todas las sesiones han sido atendidas, cambiar el estado
                     // del paquete actual a inactivo y activar el siguiente paquete
                     // si existe
@@ -251,12 +254,16 @@ class CitaController extends Controller
 
             // Verifica si el paquete actual se desactiva o no
             $historias = HistoriaClinica::with(['cita'])->where([
+                'id_paciente' => $validatedCita['id_paciente'],
                 'activo' => 1
             ])->get();
 
             // Obtener paquetes no activas (si existen) para activarlas
             // en caso las actuales seran desactivadas
-            $historias_no_activas = HistoriaClinica::with(['paquete'])->where('activo',0)->get();
+            $historias_no_activas = HistoriaClinica::with(['paquete'])->where([
+                'id_paciente' => $validatedCita['id_paciente'],
+                'activo' => 0
+            ])->get();
             
             if( $historias->count() > 0 )
             {
