@@ -10,7 +10,7 @@ class NotaCredito extends Model
     /** @use HasFactory<\Database\Factories\NotaCreditoFactory> */
     use HasFactory;
 
-    protected $table = 'notas_credito';
+    protected $table = 'notas_creditos';
 
     protected $fillable = [
         'id_sede',
