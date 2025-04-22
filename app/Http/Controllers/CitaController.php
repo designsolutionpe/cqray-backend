@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cita;
-use App\Models\Paciente;
-use App\Models\DetalleHorario;
 use App\Models\Sede;
 use App\Models\User;
+use App\Models\Articulo;
+use App\Models\Paciente;
 use Illuminate\Http\Request;
+use App\Models\DetalleHorario;
+use App\Models\EstadoPaciente;
+use App\Models\HistoriaClinica;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -85,8 +88,6 @@ class CitaController extends Controller
             // Validar los datos de la cita
             $validatedCita = $request->validate([
                 'id_paciente' => 'required|exists:pacientes,id',
-                //'id_quiropractico' => 'required|exists:quiropracticos,id',
-                //'id_detalle_horario' => 'nullable|exists:detalle_horarios,id',
                 'id_sede' => 'required|exists:sedes,id',
                 'fecha_cita' => 'required|date',
                 'hora_cita' => 'required|date_format:H:i',
@@ -94,10 +95,105 @@ class CitaController extends Controller
                 'tipo_paciente' => 'required|integer|exists:estado_pacientes,id', // Nuevo, Reporte, Plan, Mantenimiento
                 'observaciones' => 'nullable|string|max:255',
                 'id_usuario' => 'required|exists:users,id',
+                'id_paquete' => 'nullable|integer|exists:articulos,id'
             ]);
 
             // Crear la cita
             $cita = Cita::create($validatedCita);
+
+            // Enlaza cita con sesion adquirida pendiente por paciente
+            if( $validatedCita['id_paquete'] != null )
+            {
+                $sesion = HistoriaClinica::where([
+                    'id_articulo' => $validatedCita['id_paquete'],
+                    'id_cita' => null,
+                    'activo' => 1,
+                ])->get()->first();
+
+                if($sesion != null)
+                {
+                    $sesion['id_cita'] = $cita->id;
+    
+                    $sesion->save();
+                }
+
+                // Cambiar el estado del paciente
+
+                // Cambia el estado del paciente dependiendo del paquete
+                // al que se le esta atribuyendo la cita
+                $paciente = Paciente::find($validatedCita['id_paciente']);
+                $articulo = Articulo::find($validatedCita['id_paquete']);
+                $estados = EstadoPaciente::all();
+
+                $estado_articulo = $estados->filter( fn($s) => str_contains(strtolower($articulo->nombre),strtolower($s->nombre)))->first();
+
+                \Log::info('estado articulo',['estado'=>$estado_articulo->id,'estados'=>$estados]);
+
+                $cita['tipo_paciente'] = $estado_articulo->id;
+                $paciente['estado'] = $estado_articulo->id;
+
+                $cita->save();
+                $paciente->save();
+            }
+
+            if( $validatedCita['estado'] == 3 )
+            {
+                // Verifica si el paquete actual se desactiva o no
+                $historias = HistoriaClinica::with(['cita'])->where([
+                    'activo' => 1
+                ])->get();
+
+                // Obtener paquetes no activas (si existen) para activarlas
+                // en caso las actuales seran desactivadas
+                $historias_no_activas = HistoriaClinica::with(['paquete'])->where([
+                    'activo' => 0,
+                    'id_cita' => null
+                ])->get();
+                
+                if( $historias->count() > 0 )
+                {
+                    \Log::info('Hay historias activas - crear cita',['historias'=>$historias]);
+                    // Obtiene el paquete asociado
+                    $articulo = Articulo::find($historias[0]['id_articulo']);
+
+                    // Filtra las sesiones que ya han sido atendidas
+                    $n_atendidos = $historias->filter(fn($h) => $h['cita'] != null ? $h['cita']['estado'] == 3 : false)->count();
+
+                    // \Log::info('Check cantidad = atendidos',['cantidad'=>$articulo->cantidad,'atendidos'=>$n_atendidos,'historias'=>$historias->filter(fn($h)=>$h['cita']['estado'] == 3)]);
+                    // Si todas las sesiones han sido atendidas, cambiar el estado
+                    // del paquete actual a inactivo y activar el siguiente paquete
+                    // si existe
+                    if( $articulo->cantidad == $n_atendidos )
+                    {
+                        // Desactiva las sesiones del paquete actual
+                        foreach($historias as &$historia)
+                        {
+                            $historia['activo'] = 0;
+                            $historia->save();
+                        }
+
+                        \Log::info('Check si hay historias no activas',['historias'=>$historias_no_activas->count()]);
+                        // Activa las sesiones del siguiente paquete disponible
+                        if( $historias_no_activas->count() > 0)
+                        {
+                            // Obtiene un array con los uuid para filtrar el siguiente
+                            // paquete disponible
+                            $result = $historias_no_activas->keyBy('uuid')->values();
+
+                            
+                            // Activa el siguiente paquete
+                            $uuid_siguiente = $result[0]['uuid'];
+                            $historias_por_activar = $historias_no_activas->filter(fn($h)=>$h['uuid'] == $uuid_siguiente && $h['cita'] == null);
+                            \Log::info('check historias por activas',['historias'=>$historias_por_activar]);
+                            foreach($historias_por_activar as &$historia)
+                            {
+                                $historia['activo'] = 1;
+                                $historia->save();
+                            }
+                        }
+                    }
+                }
+            }
 
             DB::commit();
 
@@ -152,6 +248,59 @@ class CitaController extends Controller
 
             // Actualizar la cita
             $cita->update($validatedCita);
+
+            // Verifica si el paquete actual se desactiva o no
+            $historias = HistoriaClinica::with(['cita'])->where([
+                'activo' => 1
+            ])->get();
+
+            // Obtener paquetes no activas (si existen) para activarlas
+            // en caso las actuales seran desactivadas
+            $historias_no_activas = HistoriaClinica::with(['paquete'])->where('activo',0)->get();
+            
+            if( $historias->count() > 0 )
+            {
+                \Log::info('Hay historias activas',['historias'=>$historias]);
+                // Obtiene el paquete asociado
+                $articulo = Articulo::find($historias[0]['id_articulo']);
+
+                // Filtra las sesiones que ya han sido atendidas
+                    $n_atendidos = $historias->filter(fn($h) => $h['cita'] != null ? $h['cita']['estado'] == 3 : false)->count();
+
+                // \Log::info('Check cantidad = atendidos',['cantidad'=>$articulo->cantidad,'atendidos'=>$n_atendidos,'historias'=>$historias->filter(fn($h)=>$h['cita']['estado'] == 3)]);
+                // Si todas las sesiones han sido atendidas, cambiar el estado
+                // del paquete actual a inactivo y activar el siguiente paquete
+                // si existe
+                if( $articulo->cantidad == $n_atendidos )
+                {
+                    // Desactiva las sesiones del paquete actual
+                    foreach($historias as &$historia)
+                    {
+                        $historia['activo'] = 0;
+                        $historia->save();
+                    }
+
+                    \Log::info('Check si hay historias no activas',['historias'=>$historias_no_activas->count()]);
+                    // Activa las sesiones del siguiente paquete disponible
+                    if( $historias_no_activas->count() > 0)
+                    {
+                        // Obtiene un array con los uuid para filtrar el siguiente
+                        // paquete disponible
+                        $result = $historias_no_activas->keyBy('uuid')->values();
+
+                        
+                        // Activa el siguiente paquete
+                        $uuid_siguiente = $result[0]['uuid'];
+                        $historias_por_activar = $historias_no_activas->filter(fn($h)=>$h['uuid'] == $uuid_siguiente && $h['cita'] == null);
+                        \Log::info('check historias por activas',['historias'=>$historias_por_activar]);
+                        foreach($historias_por_activar as &$historia)
+                        {
+                            $historia['activo'] = 1;
+                            $historia->save();
+                        }
+                    }
+                }
+            }
 
             DB::commit();
 

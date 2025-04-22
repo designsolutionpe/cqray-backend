@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('id_persona')->constrained('personas')->onDelete('cascade');
             $table->foreignId('id_sede')->constrained('sedes')->onDelete('cascade');
             $table->integer('historia_clinica')->nullable();
-            $table->tinyInteger('estado')->default(1); // 1: Activo, 0: Inactivo
+            $table->tinyInteger('estado')->default(1); // 1: Nuevo, 2: Reporte, 3: Plan, 4: Mantenimiento, 5: Individual
             $table->timestamps();
         });
     }

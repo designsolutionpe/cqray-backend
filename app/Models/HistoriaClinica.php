@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Cita;
 use App\Models\Articulo;
 use App\Models\Paciente;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +21,8 @@ class HistoriaClinica extends Model
         'id_estado_cita',
         'id_articulo',
         'estado_pago',
-        'activo'
+        'activo',
+        'uuid'
     ];
 
     public function paciente()
@@ -33,9 +35,9 @@ class HistoriaClinica extends Model
         return $this->belongsTo(Sede::class,'id_sede');
     }
 
-    public function estado_cita()
+    public function cita()
     {
-        return $this->belongsTo(EstadoCita::class,'id_estado_cita');
+        return $this->belongsTo(Cita::class,'id_cita');
     }
 
     public function paquete()

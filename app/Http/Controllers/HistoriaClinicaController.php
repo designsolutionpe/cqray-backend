@@ -14,7 +14,7 @@ class HistoriaClinicaController extends Controller
     public function index()
     {
         //
-        $all = HistoriaClinica::with('paciente','sede','estado_cita')->get();
+        $all = HistoriaClinica::with('paciente','sede','cita')->get();
         return response()->json($all,200);
     }
 

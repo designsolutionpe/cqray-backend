@@ -20,6 +20,7 @@ class Articulo extends Model
         'id_categoria',
         'id_unidad_medida',
         'tipo_articulo',
+        'id_estado_paciente',
         'nombre',
         'detalle',
         'cantidad',
@@ -47,5 +48,10 @@ class Articulo extends Model
     public function unidad_medida()
     {
         return $this->belongsTo(UnidadMedidaArticulo::class,'id_unidad_medida');
+    }
+
+    public function estado_paciente()
+    {
+        return $this->belongsTo(EstadoPaciente::class,'id_estado_paciente');
     }
 }
