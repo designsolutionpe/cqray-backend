@@ -11,6 +11,7 @@ use App\Http\Controllers\ArticuloController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\EstadoCitaController;
 use App\Http\Controllers\ComprobanteController;
+use App\Http\Controllers\NotaCreditoController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\QuiropracticoController;
 use App\Http\Controllers\EstadoPacienteController;

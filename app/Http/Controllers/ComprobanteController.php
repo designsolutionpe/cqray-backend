@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ComprobanteResource;
+use App\Models\Articulo;
+use App\Models\Paciente;
 use App\Models\Comprobante;
-use App\Models\DetalleComprobante;
 use Illuminate\Http\Request;
+use App\Models\HistoriaClinica;
+use App\Models\DetalleComprobante;
 use Illuminate\Support\Facades\DB;
+use App\Http\Resources\ComprobanteResource;
 
 class ComprobanteController extends Controller
 {
@@ -130,6 +133,34 @@ class ComprobanteController extends Controller
                 'vuelto' => $validatedComprobante['vuelto'],
             ]);
     
+            // GENERA SESIONES POR PACIENTE
+            // **NO BORRAR**
+            $paciente_exists = true;
+            $paciente = Paciente::where('id_persona',$validatedComprobante['id_persona'])->get()->first();
+            \Log::info('check paciente',['paciente'=>$paciente]);
+            if($paciente == null)
+                $paciente_exists = false;
+            if($paciente_exists)
+            {
+                // Define si los historiales clinicos se pagaron o
+                // estan a deuda
+                $estado_pago = 0;
+                if( $validatedComprobante['vuelto'] < 0 )
+                    $estado_pago = 2;
+                else if( $validatedComprobante['vuelto'] >= 0 )
+                    $estado_pago = 1;
+                $historial_paciente = HistoriaClinica::where([
+                    'id_paciente' => $paciente->id,
+                    'activo' => 1
+                ])->get();
+                $no_hay_activo = 1;
+                // Verifica que no haya algun paquete activo
+                // si lo hay, los siguientes paquetes desactivarlos
+                // se vuelven a activar una vez terminadas las
+                // sesiones del paquete actualmente activo
+                if( $historial_paciente->count() > 0 )
+                    $no_hay_activo = 0;
+            
             // Crear detalles
             foreach ($validatedComprobante['detalles'] as $detalle) {
                 DetalleComprobante::create([
@@ -142,6 +173,28 @@ class ComprobanteController extends Controller
                 ]);
             }
     
+            // GENERA HISTORIAL Y SESIONES
+            // **NO BORRAR**
+            if( $validatedComprobante['tipo'] == '2' && $paciente_exists )
+                {
+                    // Crear historial clinicas
+                    $articulo = Articulo::find($detalle['id_articulo']);
+                    // Genera uuid para agrupar las sesiones
+                    $uuid = bin2hex(random_bytes(16));
+                    for($i = 0; $i < $articulo['cantidad'];$i++)
+                    {
+                        HistoriaClinica::create([
+                            'id_paciente' => $paciente->id,
+                            'id_sede' => $validatedComprobante['id_sede'],
+                            'id_articulo' => $articulo->id,
+                            'estado_pago' => $estado_pago,
+                            'activo' => $no_hay_activo,
+                            'uuid' => $uuid
+                        ]);
+                    }
+                }
+            }
+
             DB::commit();
     
             // Recargar relaciones y devolver con el resource
