@@ -13,15 +13,17 @@ class NotaCredito extends Model
     protected $table = 'notas_creditos';
 
     protected $fillable = [
+        'tipo_comprobante',
         'id_sede',
         'id_comprobante',
-        'tipo_comprobante',
         'motivo',
         'comentario',
         'fecha_emision',
-        'total',
+        'moneda',
+        'subtotal',
         'monto_igv',
         'descuento',
+        'total',
     ];
 
     // Relación con la tabla comprobantes
