@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\SedeController;
@@ -23,6 +24,13 @@ use App\Http\Controllers\UnidadMedidaArticuloController;
 //Route::get('/sedes', [SedeController::class, 'index']);
 // Route::middleware('auth:sanctum')->get('/sedes', [SedeController::class, 'index']);
 Route::post('/login', [UserController::class, 'login']);
+
+Route::get('/personas/{foto}',function($foto){
+  $path = storage_path("app/public/personas/$foto");
+  if(file_exists($path))
+    return response()->file($path);
+  return response()->json(['error'=>'Image not found'], 404);
+});
 
 Route::middleware(['auth:sanctum'])->group(function () {
   
