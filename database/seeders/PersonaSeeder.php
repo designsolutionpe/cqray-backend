@@ -152,12 +152,30 @@ class PersonaSeeder extends Seeder
         //     'rol' => 'Superadministrador',
         //     'id_persona' => $ray->id,
         // ]);
-        User::create([
-            'login' => 'yorozco',
-            'email' => 'yorozco@erptotal.online',
-            'password' => Hash::make('123456'),
-            'rol' => 'Superadministrador',
-            'id_persona' => 249,
-        ]);
+        //User::create([
+          //  'login' => 'yorozco',
+            //'email' => 'yorozco@erptotal.online',
+           // 'password' => Hash::make('123456'),
+           // 'rol' => 'Superadministrador',
+          //  'id_persona' => 249,
+      //]);
+      $leti = Persona::create([
+        'tipo_documento' => 'Carnet de Extranjería',
+        'numero_documento' => '000000001',
+        'nombre' => 'Leticia',
+        'apellido' => 'Gasparetto',
+        'genero' => 'Femenino',
+        'fecha_nacimiento' => '1999-01-01',
+        'direccion' => '',
+        'telefono' => '',
+        'email' => 'lgasparetto@erptotal.online'
+      ]);
+      User::create([
+        'login' => 'lgasparetto',
+        'email' => 'lgasparetto@erptotal.online',
+        'password' => Hash::make("123456"),
+        'rol' => 'Superadministrador',
+        'id_persona' => 254
+      ]);
     }
 }
