@@ -159,7 +159,8 @@ class ComprobanteController extends Controller
                 // se vuelven a activar una vez terminadas las
                 // sesiones del paquete actualmente activo
                 if( $historial_paciente->count() > 0 )
-                    $no_hay_activo = 0;
+                  $no_hay_activo = 0;
+            }
             
             // Crear detalles
             foreach ($validatedComprobante['detalles'] as $detalle) {
@@ -171,7 +172,7 @@ class ComprobanteController extends Controller
                     'descuento' => $detalle['descuento'] ?? 0,
                     'total_producto' => $detalle['total_producto'],
                 ]);
-            }
+            
     
             // GENERA HISTORIAL Y SESIONES
             // **NO BORRAR**
@@ -192,6 +193,7 @@ class ComprobanteController extends Controller
                             'uuid' => $uuid
                         ]);
                     }
+                    $no_hay_activo=0;
                 }
             }
 
