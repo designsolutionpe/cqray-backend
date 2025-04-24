@@ -38,19 +38,26 @@ class NotaCreditoController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
-
+    
         try {
             // Validar datos de la nota de crédito
             $validatedNotaCredito = $request->validate([
                 'id_comprobante' => 'required|exists:comprobantes,id',
                 'tipo_comprobante' => 'required|integer',
                 'id_sede' => 'required|exists:sedes,id',
+                'tipo' => 'required|integer',
                 'motivo' => 'required|integer',
                 'comentario' => 'nullable|string',
+                'serie' => 'required|string',
+                'numero' => 'required|string',
                 'fecha_emision' => 'required|date',
-                'total' => 'required|numeric',
+                'moneda' => 'required|in:PEN,USD',
+                'tipo_cambio' => 'nullable|numeric',
+                'igv' => 'required|boolean',
+                'subtotal' => 'required|numeric',
                 'monto_igv' => 'required|numeric',
                 'descuento' => 'required|numeric',
+                'total' => 'required|numeric',
                 'detalles' => 'required|array|min:1',
                 'detalles.*.id_articulo' => 'required|exists:articulos,id',
                 'detalles.*.cantidad' => 'required|numeric|min:1',
@@ -58,20 +65,27 @@ class NotaCreditoController extends Controller
                 'detalles.*.descuento' => 'nullable|numeric',
                 'detalles.*.total_producto' => 'required|numeric',
             ]);
-
+    
             // Crear nota de crédito
             $notaCredito = NotaCredito::create([
                 'id_comprobante' => $validatedNotaCredito['id_comprobante'],
                 'tipo_comprobante' => $validatedNotaCredito['tipo_comprobante'],
                 'id_sede' => $validatedNotaCredito['id_sede'],
+                'tipo' => $validatedNotaCredito['tipo'],
                 'motivo' => $validatedNotaCredito['motivo'],
                 'comentario' => $validatedNotaCredito['comentario'] ?? null,
+                'serie' => $validatedNotaCredito['serie'],
+                'numero' => $validatedNotaCredito['numero'],
                 'fecha_emision' => $validatedNotaCredito['fecha_emision'],
-                'total' => $validatedNotaCredito['total'],
+                'moneda' => $validatedNotaCredito['moneda'],
+                'tipo_cambio' => $validatedNotaCredito['tipo_cambio'] ?? null, // Puede ser nulo
+                'igv' => $validatedNotaCredito['igv'],
+                'subtotal' => $validatedNotaCredito['subtotal'],
                 'monto_igv' => $validatedNotaCredito['monto_igv'],
                 'descuento' => $validatedNotaCredito['descuento'],
+                'total' => $validatedNotaCredito['total'],
             ]);
-
+    
             // Crear detalles de la nota de crédito
             foreach ($validatedNotaCredito['detalles'] as $detalle) {
                 DetalleNota::create([
@@ -83,16 +97,16 @@ class NotaCreditoController extends Controller
                     'total_producto' => $detalle['total_producto'],
                 ]);
             }
-
+    
             DB::commit();
-
+    
             // Recargar relaciones y devolver con el resource
             $notaCredito->load(['detalles', 'comprobante', 'sede']);
-
+    
             return (new NotaCreditoResource($notaCredito))
                 ->response()
                 ->setStatusCode(201);
-
+    
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -100,6 +114,7 @@ class NotaCreditoController extends Controller
             ], 500);
         }
     }
+    
 
     /**
      * Display the specified resource.
@@ -123,18 +138,26 @@ class NotaCreditoController extends Controller
     public function update(Request $request, NotaCredito $notaCredito)
     {
         DB::beginTransaction();
-
+    
         try {
+            // Validar datos de la nota de crédito
             $validatedData = $request->validate([
                 'id_comprobante' => 'required|exists:comprobantes,id',
                 'tipo_comprobante' => 'required|integer',
                 'id_sede' => 'required|exists:sedes,id',
+                'tipo' => 'required|integer',
                 'motivo' => 'required|integer',
                 'comentario' => 'nullable|string',
+                'serie' => 'required|string',
+                'numero' => 'required|string',
                 'fecha_emision' => 'required|date',
-                'total' => 'required|numeric',
+                'moneda' => 'required|in:PEN,USD',
+                'tipo_cambio' => 'nullable|numeric',
+                'igv' => 'required|boolean',
+                'subtotal' => 'required|numeric',
                 'monto_igv' => 'required|numeric',
                 'descuento' => 'required|numeric',
+                'total' => 'required|numeric',
                 'detalles' => 'required|array|min:1',
                 'detalles.*.id_articulo' => 'required|exists:articulos,id',
                 'detalles.*.cantidad' => 'required|numeric|min:1',
@@ -142,23 +165,30 @@ class NotaCreditoController extends Controller
                 'detalles.*.descuento' => 'nullable|numeric',
                 'detalles.*.total_producto' => 'required|numeric',
             ]);
-
+    
             // Actualizar nota de crédito
             $notaCredito->update([
                 'id_comprobante' => $validatedData['id_comprobante'],
                 'tipo_comprobante' => $validatedData['tipo_comprobante'],
                 'id_sede' => $validatedData['id_sede'],
+                'tipo' => $validatedData['tipo'],
                 'motivo' => $validatedData['motivo'],
                 'comentario' => $validatedData['comentario'] ?? null,
+                'serie' => $validatedData['serie'],
+                'numero' => $validatedData['numero'],
                 'fecha_emision' => $validatedData['fecha_emision'],
-                'total' => $validatedData['total'],
+                'moneda' => $validatedData['moneda'],
+                'tipo_cambio' => $validatedData['tipo_cambio'] ?? null,
+                'igv' => $validatedData['igv'],
+                'subtotal' => $validatedData['subtotal'],
                 'monto_igv' => $validatedData['monto_igv'],
                 'descuento' => $validatedData['descuento'],
+                'total' => $validatedData['total'],
             ]);
-
+    
             // Eliminar detalles anteriores
             $notaCredito->detalles()->delete();
-
+    
             // Crear nuevos detalles
             foreach ($validatedData['detalles'] as $detalle) {
                 DetalleNota::create([
@@ -170,16 +200,16 @@ class NotaCreditoController extends Controller
                     'total_producto' => $detalle['total_producto'],
                 ]);
             }
-
+    
             DB::commit();
-
+    
             // Recargar relaciones y devolver con recurso
             $notaCredito->load(['detalles', 'comprobante', 'sede']);
-
+    
             return (new NotaCreditoResource($notaCredito))
                 ->response()
                 ->setStatusCode(200);
-
+    
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -187,6 +217,7 @@ class NotaCreditoController extends Controller
             ], 500);
         }
     }
+    
 
     /**
      * Remove the specified resource from storage.

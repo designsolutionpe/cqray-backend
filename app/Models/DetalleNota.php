@@ -10,7 +10,7 @@ class DetalleNota extends Model
     /** @use HasFactory<\Database\Factories\DetalleNotaFactory> */
     use HasFactory;
 
-    protected $table = 'detalle_notas_credito';
+    protected $table = 'detalle_notas';
 
     protected $fillable = [
         'id_nota_credito',
