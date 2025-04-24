@@ -82,6 +82,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
   // Gestion de Unidad de Medida
   Route::get('/articulos/medidas',[UnidadMedidaArticuloController::class,'index']);
+  Route::post('/articulos/medidas',[UnidadMedidaArticuloController::class,'store']);
+  Route::put('/articulos/medidas/{medida}',[UnidadMedidaArticuloController::class,'update']);
+  Route::delete('/articulos/medidas/{medida}',[UnidadMedidaArticuloController::class,'destroy']);
 
   // Configuracion
   Route::get('/configuracion', [ConfiguracionController::class, 'index']);
