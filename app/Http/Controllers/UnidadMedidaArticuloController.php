@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UnidadMedidaArticulo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\UnidadMedidaArticulo;
 
 class UnidadMedidaArticuloController extends Controller
 {
@@ -31,6 +32,22 @@ class UnidadMedidaArticuloController extends Controller
     public function store(Request $request)
     {
         //
+        DB::beginTransaction();
+        try
+        {
+            $validated = $request->validate([
+                'nombre' => 'required|string',
+            ]);
+
+            $unidad = UnidadMedida::create($validated);
+            DB::commit();
+            return response()->json($unidad,201);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollback();
+            return response()->json(['error'=>'Error al crear la unidad de medida'],500);
+        }
     }
 
     /**
@@ -55,6 +72,23 @@ class UnidadMedidaArticuloController extends Controller
     public function update(Request $request, UnidadMedidaArticulo $unidadMedidaArticulo)
     {
         //
+        DB::beginTransaction();
+        try
+        {
+            $validated = $request->validate([
+                'nombre' => 'required|string',
+            ]);
+
+            $unidadMedidaArticulo->update($validated);
+
+            DB::commit();
+            return response()->json($unidadMedidaArticulo,200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollback();
+            return response()->json(['error'=>'Error al crear la unidad de medida'],500);
+        }
     }
 
     /**
@@ -63,5 +97,17 @@ class UnidadMedidaArticuloController extends Controller
     public function destroy(UnidadMedidaArticulo $unidadMedidaArticulo)
     {
         //
+        DB::beginTransaction();
+        try
+        {
+            $unidadMedidaArticulo->delete();
+            DB::commit();
+            return response()->json(['message'=>'La unidad de medida fue eliminada con exito'],200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollback();
+            return response()->json(['error'=>'Error al crear la unidad de medida'],500);
+        }
     }
 }
