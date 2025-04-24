@@ -36,10 +36,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
   
   // Gestion de Sedes
   Route::get('/sedes', [SedeController::class, 'index']);
+  Route::get('/sedes/count',[SedeController::class,'count']);
   
   // Gestion de citas
   Route::get('/citas/estados',[EstadoCitaController::class,'index']);
   Route::get('/citas', [CitaController::class, 'index']);
+  Route::get('/citas/count',[CitaController::class,'count']);
   Route::post('/citas', [CitaController::class, 'store']);
   Route::put('/citas/{cita}', [CitaController::class, 'update']);
   Route::delete('/citas/{cita}', [CitaController::class, 'destroy']);
@@ -55,6 +57,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   // Gestion de pacientes
   Route::get('/pacientes/estados',[EstadoPacienteController::class,'index']);
   Route::get('/pacientes', [PacienteController::class, 'index']);
+  Route::get('/pacientes/count',[PacienteController::class,'count']);
   Route::get('/pacientes/{paciente}',[PacienteController::class,'show']);
   
   // Gestion de Historial Clinico
@@ -86,6 +89,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
   // Comprobantes
   Route::get('/comprobantes', [ComprobanteController::class, 'index']);
+  Route::get('/comprobantes/count',[ComprobanteController::class,'count']);
   Route::post('/comprobantes', [ComprobanteController::class, 'store']);
   Route::put('/comprobantes/{comprobante}', [ComprobanteController::class, 'update']);
   Route::delete('/comprobantes/{comprobante}', [ComprobanteController::class, 'destroy']);

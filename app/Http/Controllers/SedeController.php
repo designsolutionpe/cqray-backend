@@ -17,6 +17,11 @@ class SedeController extends Controller
         return response()->json(Sede::all(), 200);
     }
 
+    public function count()
+    {
+      return response()->json(Sede::all()->count(),200);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

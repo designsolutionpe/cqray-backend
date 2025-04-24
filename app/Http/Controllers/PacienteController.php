@@ -21,6 +21,15 @@ class PacienteController extends Controller
         return response()->json(Paciente::with('persona', 'sede','estado','persona.comprobantes','historial_clinico','historial_clinico.paquete')->get(), 200);
     }
 
+    public function count(Request $request)
+    {
+      $sede = $request->query("id_sede");
+      if(isset($sede))
+        return response()->json(Paciente::where("id_sede",$sede)->get()->count(),200);
+      else
+        return response()->json(Paciente::all()->count(),200);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

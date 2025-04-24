@@ -28,6 +28,15 @@ class CitaController extends Controller
             200);
     }
 
+    public function count(Request $request)
+    {
+      $sede = $request->query("id_sede");
+      if(isset($sede))
+        return response()->json(Cita::where("id_sede",$sede)->get()->count(),200);
+      else
+        return response()->json(Cita::all()->count(),200);
+    }
+
     public function indexByFechaYSede(Request $request)
     {
         // Obtener los parámetros de la solicitud

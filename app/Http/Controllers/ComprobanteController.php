@@ -27,6 +27,15 @@ class ComprobanteController extends Controller
         ->setStatusCode(200);
     }
 
+    public function count(Request $request)
+    {
+      $sede = $request->query("id_sede");
+      if(isset($sede))
+        return response()->json(Comprobante::where("id_sede",$sede)->get()->count(),200);
+      else
+        return response()->json(Comprobante::all()->count(),200);
+    }
+
     public function searchComprobantes(Request $request)
     {
         // Obtener los parámetros de búsqueda
