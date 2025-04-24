@@ -39,11 +39,12 @@ class ComprobanteController extends Controller
     public function searchComprobantes(Request $request)
     {
         // Obtener los parámetros de búsqueda
-        $numero = $request->get('numero', null);
         $serie = $request->get('serie', null);
-        $fechaInicio = $request->get('fecha_inicio', null);
-        $fechaFin = $request->get('fecha_fin', null);
-    
+        $numero = $request->get('numero', null);
+        
+        //$fechaInicio = $request->get('fecha_inicio', null);
+        //$fechaFin = $request->get('fecha_fin', null);
+
         // Validar que al menos uno de los parámetros esté presente
         // if (is_null($numero) && is_null($serie) && is_null($fechaInicio) && is_null($fechaFin)) {
         if (is_null($numero) && is_null($serie)) {    
@@ -78,7 +79,7 @@ class ComprobanteController extends Controller
         return ComprobanteResource::collection($comprobantes)
             ->response()
             ->setStatusCode(200);
-    }    
+    }
 
     /**
      * Show the form for creating a new resource.
