@@ -27,6 +27,15 @@ class ComprobanteController extends Controller
         ->setStatusCode(200);
     }
 
+    public function count(Request $request)
+    {
+      $sede = $request->query("id_sede");
+      if(isset($sede))
+        return response()->json(Comprobante::where("id_sede",$sede)->get()->count(),200);
+      else
+        return response()->json(Comprobante::all()->count(),200);
+    }
+
     public function searchComprobantes(Request $request)
     {
         // Obtener los parámetros de búsqueda
@@ -160,7 +169,8 @@ class ComprobanteController extends Controller
                 // se vuelven a activar una vez terminadas las
                 // sesiones del paquete actualmente activo
                 if( $historial_paciente->count() > 0 )
-                    $no_hay_activo = 0;
+                  $no_hay_activo = 0;
+            }
             
             // Crear detalles
             foreach ($validatedComprobante['detalles'] as $detalle) {
@@ -172,7 +182,7 @@ class ComprobanteController extends Controller
                     'descuento' => $detalle['descuento'] ?? 0,
                     'total_producto' => $detalle['total_producto'],
                 ]);
-            }
+            
     
             // GENERA HISTORIAL Y SESIONES
             // **NO BORRAR**
@@ -193,6 +203,7 @@ class ComprobanteController extends Controller
                             'uuid' => $uuid
                         ]);
                     }
+                    $no_hay_activo=0;
                 }
             }
 
