@@ -32,6 +32,12 @@ class NotaCreditoController extends Controller
         //
     }
 
+    public function getLastItem()
+    {
+        $comp = NotaCredito::all()->last();
+        return response()->json($comp,200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
