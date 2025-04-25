@@ -39,7 +39,9 @@ class ComprobanteController extends Controller
 
     public function getLastItem()
     {
-        $comp = Comprobante::all()->last();
+        $comp = Comprobante::all()->sortByDesc(function($item){
+            return (int) $item->numero;
+        })->first();
         return response()->json($comp,200);
     }
 
@@ -122,7 +124,7 @@ class ComprobanteController extends Controller
                 'fecha_emision' => 'required|date',
                 'moneda' => 'required|in:PEN,USD',
                 'tipo_cambio' => 'nullable|numeric',
-                'igv' => 'required|boolean',
+                'igv' => 'nullable|boolean',
                 'subtotal' => 'required|numeric',
                 'monto_igv' => 'required|numeric',
                 'descuento' => 'required|numeric',
