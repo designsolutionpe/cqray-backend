@@ -6,6 +6,7 @@ use App\Models\Articulo;
 use App\Models\Paciente;
 use App\Models\Comprobante;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\HistoriaClinica;
 use App\Models\DetalleComprobante;
 use Illuminate\Support\Facades\DB;
@@ -104,7 +105,14 @@ class ComprobanteController extends Controller
                 'tipo' => 'required|integer',
                 'id_persona' => 'required|exists:personas,id',
                 'serie' => 'required|string|max:10',
-                'numero' => 'required|string|max:10|unique:comprobantes,numero',
+                'numero' => [
+                    'required',
+                    'string',
+                    'max:10',
+                    Rule::unique('comprobantes')->where(function ($query) use ($request) {
+                        return $query->where('serie', $request->serie);
+                    }),
+                ],
                 'fecha_emision' => 'required|date',
                 'moneda' => 'required|in:PEN,USD',
                 'tipo_cambio' => 'nullable|numeric',
@@ -254,7 +262,14 @@ class ComprobanteController extends Controller
                 'tipo' => 'required|integer',
                 'id_persona' => 'required|exists:personas,id',
                 'serie' => 'required|string|max:10',
-                'numero' => 'required|string|max:10|unique:comprobantes,numero,' . $comprobante->id,
+                'numero' => [
+                    'required',
+                    'string',
+                    'max:10',
+                    Rule::unique('comprobantes')->where(function ($query) use ($request) {
+                        return $query->where('serie', $request->serie);
+                    })->ignore($comprobante->id),
+                ],
                 'fecha_emision' => 'required|date',
                 'moneda' => 'required|in:PEN,USD',
                 'tipo_cambio' => 'nullable|numeric',
