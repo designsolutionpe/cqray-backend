@@ -69,7 +69,7 @@ class UnidadMedidaArticuloController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, UnidadMedidaArticulo $unidadMedidaArticulo)
+    public function update(Request $request, UnidadMedidaArticulo $medida)
     {
         //
         DB::beginTransaction();
@@ -79,15 +79,15 @@ class UnidadMedidaArticuloController extends Controller
                 'nombre' => 'required|string',
             ]);
 
-            $unidadMedidaArticulo->update($validated);
+            $medida->update($request->all());
 
             DB::commit();
-            return response()->json($unidadMedidaArticulo,200);
+            return response()->json($medida,200);
         }
         catch(\Exception $e)
         {
             DB::rollback();
-            return response()->json(['error'=>'Error al crear la unidad de medida'],500);
+            return response()->json(['error'=>'Error al actualizar la unidad de medida ' . $e->getMessage()],500);
         }
     }
 
