@@ -36,6 +36,12 @@ class ComprobanteController extends Controller
         return response()->json(Comprobante::all()->count(),200);
     }
 
+    public function getLastItem()
+    {
+        $comp = Comprobante::all()->last();
+        return response()->json($comp,200);
+    }
+
     public function searchComprobantes(Request $request)
     {
         // Obtener los parámetros de búsqueda

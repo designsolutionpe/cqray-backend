@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             PacienteSeeder::class,
             // QuiropracticoSeeder::class,
             // HorarioSeeder::class,
-            PersonaSeeder::class,
+            // PersonaSeeder::class,
             UnidadMedidaArticuloSeeder::class,
             CategoriaArticuloSeeder::class,
             ArticulosSeeder::class,

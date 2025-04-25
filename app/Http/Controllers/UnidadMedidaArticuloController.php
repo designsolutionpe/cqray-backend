@@ -94,20 +94,20 @@ class UnidadMedidaArticuloController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UnidadMedidaArticulo $unidadMedidaArticulo)
+    public function destroy(UnidadMedidaArticulo $medida)
     {
         //
         DB::beginTransaction();
         try
         {
-            $unidadMedidaArticulo->delete();
+            $medida->delete();
             DB::commit();
             return response()->json(['message'=>'La unidad de medida fue eliminada con exito'],200);
         }
         catch(\Exception $e)
         {
             DB::rollback();
-            return response()->json(['error'=>'Error al crear la unidad de medida'],500);
+            return response()->json(['error'=>'Error al eliminar la unidad de medida ' . $e->getMessage()],500);
         }
     }
 }
