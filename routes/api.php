@@ -97,6 +97,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::put('/comprobantes/{comprobante}', [ComprobanteController::class, 'update']);
   Route::delete('/comprobantes/{comprobante}', [ComprobanteController::class, 'destroy']);
   Route::get('/comprobantes/buscar', [ComprobanteController::class, 'searchComprobantes']);
+  Route::get('/comprobantes/last',[ComprobanteController::class,'getLastItem']);
 
   Route::get('/pacientes/{persona}/comprobantes',[PersonaController::class,'getVouchers']);
   // Notas de Crédito
