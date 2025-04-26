@@ -39,7 +39,7 @@ class UnidadMedidaArticuloController extends Controller
                 'nombre' => 'required|string',
             ]);
 
-            $unidad = UnidadMedida::create($validated);
+            $unidad = UnidadMedidaArticulo::create($validated);
             DB::commit();
             return response()->json($unidad,201);
         }
