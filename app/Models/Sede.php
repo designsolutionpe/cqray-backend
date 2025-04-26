@@ -17,7 +17,10 @@ class Sede extends Model
         'direccion',
         'telefono',
         'email',
-        'foto'
+        'foto',
+        'ruc',
+        'razon_social',
+        'direccion_fiscal'
     ];
 
     public $timestamps = true; // Para created_at y updated_at

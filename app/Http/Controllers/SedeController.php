@@ -42,6 +42,9 @@ class SedeController extends Controller
             'telefono' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'ruc' => 'nullable|string|max:20',
+            'razon_social' => 'nullable|string',
+            'direccion_fiscal' => 'nullable|string',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -83,6 +86,9 @@ class SedeController extends Controller
             'direccion' => 'nullable|string|max:255',
             'telefono' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
+            'ruc' => 'nullable|string|max:20',
+            'razon_social' => 'nullable|string',
+            'direccion_fiscal' => 'nullable|string',
         ]);
 
         if ($sede->foto){
