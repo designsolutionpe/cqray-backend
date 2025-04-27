@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             UnidadMedidaArticuloSeeder::class,
             CategoriaArticuloSeeder::class,
             ArticulosSeeder::class,
+            TipoPagoSeeder::class,
         ]);
         
         User::factory()->create([

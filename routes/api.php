@@ -10,6 +10,7 @@ use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ArticuloController;
 use App\Http\Controllers\PacienteController;
+use App\Http\Controllers\TipoPagoController;
 use App\Http\Controllers\EstadoCitaController;
 use App\Http\Controllers\ComprobanteController;
 use App\Http\Controllers\NotaCreditoController;
@@ -107,6 +108,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::put('/notas-creditos/{notaCredito}', [NotaCreditoController::class, 'update']);
   Route::delete('/notas-creditos/{notaCredito}', [NotaCreditoController::class, 'destroy']);
   Route::get('/notas-creditos/last',[NotaCreditoController::class,'getLastItem']);
+
+  // Tipos de Pagos
+  Route::get('/tipos-pago',[TipoPagoController::class,'index']);
+  Route::post('/tipos-pago',[TipoPagoController::class,'store']);
+  Route::put('/tipos-pago/{tipoPago}',[TipoPagoController::class,'update']);
+  Route::delete('/tipos-pago/{tipoPago}',[TipoPagoController::class,'destroy']);
 
 });
 

@@ -131,6 +131,7 @@ class ComprobanteController extends Controller
                 'total' => 'required|numeric',
                 'pago_cliente' => 'required|numeric',
                 'vuelto' => 'required|numeric',
+                'deuda' => 'required|numeric',
                 'detalles' => 'required|array|min:1',
                 'detalles.*.id_articulo' => 'required|exists:articulos,id',
                 'detalles.*.cantidad' => 'required|numeric|min:1',
@@ -150,7 +151,7 @@ class ComprobanteController extends Controller
                 'fecha_emision' => $validatedComprobante['fecha_emision'],
                 'moneda' => $validatedComprobante['moneda'],
                 'tipo_cambio' => $validatedComprobante['tipo_cambio'] ?? null,
-                'igv' => $validatedComprobante['igv'],
+                'igv' => $validatedComprobante['igv'] ?? false,
                 'subtotal' => $validatedComprobante['subtotal'],
                 'monto_igv' => $validatedComprobante['monto_igv'],
                 'descuento' => $validatedComprobante['descuento'],
@@ -171,9 +172,9 @@ class ComprobanteController extends Controller
                 // Define si los historiales clinicos se pagaron o
                 // estan a deuda
                 $estado_pago = 0;
-                if( $validatedComprobante['vuelto'] < 0 )
+                if( $validatedComprobante['deuda'] > 0 )
                     $estado_pago = 2;
-                else if( $validatedComprobante['vuelto'] >= 0 )
+                else if( $validatedComprobante['deuda'] == 0 )
                     $estado_pago = 1;
                 $historial_paciente = HistoriaClinica::where([
                     'id_paciente' => $paciente->id,
