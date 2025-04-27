@@ -25,8 +25,9 @@ use App\Http\Controllers\UnidadMedidaArticuloController;
 // Route::middleware('auth:sanctum')->get('/sedes', [SedeController::class, 'index']);
 Route::post('/login', [UserController::class, 'login']);
 
-Route::get('/images/{path}',function($path){
-  $path = storage_path("app/public/$path");
+Route::get('/images/{path}/{image}',function($path,$image){
+  \Log::info('check image path',['data'=>$path]);
+  $path = public_path("storage/$path/$image");
   if(file_exists($path))
     return response()->file($path);
   return response()->json(['error'=>'Image not found'], 404);
