@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
           //
-          $table->unsignedBigInteger("id_rol");
-          $table->foreign("id_rol")->references("id")->on("rols");
+          $table->unsignedBigInteger("id_rol")->nullable();
+          $table->foreign("id_rol")->references("id")->on("rols")->onDelete('set null');
         });
     }
 

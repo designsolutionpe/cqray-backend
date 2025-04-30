@@ -107,8 +107,12 @@ class CitaController extends Controller
                 'id_paquete' => 'nullable|integer|exists:articulos,id'
             ]);
 
+            \Log::info('check cita',['data'=>$validatedCita]);
+
             // Crear la cita
             $cita = Cita::create($validatedCita);
+
+            \Log::info('cita',['check'=>$cita]);
 
             // Enlaza cita con sesion adquirida pendiente por paciente
             if( isset($validatedCita['id_paquete']) && $validatedCita['id_paquete'] != null )
@@ -119,6 +123,8 @@ class CitaController extends Controller
                     'id_cita' => null,
                     'activo' => 1,
                 ])->get()->first();
+
+                \Log::info('sesion',['data'=>$sesion]);
 
                 if($sesion != null)
                 {
@@ -135,7 +141,7 @@ class CitaController extends Controller
                 $articulo = Articulo::find($validatedCita['id_paquete']);
                 $estados = EstadoPaciente::all();
 
-                $estado_articulo = $estados->filter( fn($s) => str_contains(strtolower($articulo->nombre),strtolower($s->nombre)))->first();
+                $estado_articulo = $estados->filter( fn($s) => $s->id == $articulo->id_estado_paciente )->first();
 
                 \Log::info('estado articulo',['estado'=>$estado_articulo->id,'estados'=>$estados]);
 

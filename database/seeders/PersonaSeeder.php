@@ -5,8 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Persona;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 class PersonaSeeder extends Seeder
 {
@@ -159,23 +157,101 @@ class PersonaSeeder extends Seeder
            // 'rol' => 'Superadministrador',
           //  'id_persona' => 249,
       //]);
-      $leti = Persona::create([
-        'tipo_documento' => 'Carnet de Extranjería',
-        'numero_documento' => '000000001',
-        'nombre' => 'Leticia',
-        'apellido' => 'Gasparetto',
-        'genero' => 'Femenino',
-        'fecha_nacimiento' => '1999-01-01',
+      // $leti = Persona::create([
+      //   'tipo_documento' => 'Carnet de Extranjería',
+      //   'numero_documento' => '000000001',
+      //   'nombre' => 'Leticia',
+      //   'apellido' => 'Gasparetto',
+      //   'genero' => 'Femenino',
+      //   'fecha_nacimiento' => '1999-01-01',
+      //   'direccion' => '',
+      //   'telefono' => '',
+      //   'email' => 'lgasparetto@erptotal.online'
+      // ]);
+      // User::create([
+      //   'login' => 'lgasparetto',
+      //   'email' => 'lgasparetto@erptotal.online',
+      //   'password' => Hash::make("123456"),
+      //   'rol' => 'Superadministrador',
+      //   'id_persona' => 254
+      // ]);
+
+      // Desarrollador
+      Persona::create([
+        'tipo_documento' => 'DNI',
+        'numero_documento' => '00000001',
+        'nombre' => 'Desarrollador',
+        'apellido' => 'Desarrollador',
+        'genero' => 'Masculino',
+        'fecha_nacimiento' => '1999-12-31',
         'direccion' => '',
         'telefono' => '',
-        'email' => 'lgasparetto@erptotal.online'
+        'email' => 'des@erptotal.online'
       ]);
-      User::create([
-        'login' => 'lgasparetto',
-        'email' => 'lgasparetto@erptotal.online',
-        'password' => Hash::make("123456"),
-        'rol' => 'Superadministrador',
-        'id_persona' => 254
+
+      // Superadministrador
+      Persona::create([
+        'tipo_documento' => 'DNI',
+        'numero_documento' => '00000002',
+        'nombre' => 'Superadministrador',
+        'apellido' => 'Superadministrador',
+        'genero' => 'Masculino',
+        'fecha_nacimiento' => '1999-12-31',
+        'direccion' => '',
+        'telefono' => '',
+        'email' => 'super@erptotal.online'
+      ]);
+
+      // Administrador
+      Persona::create([
+        'tipo_documento' => 'DNI',
+        'numero_documento' => '00000003',
+        'nombre' => 'Administrador',
+        'apellido' => 'Administrador',
+        'genero' => 'Masculino',
+        'fecha_nacimiento' => '1999-12-31',
+        'direccion' => '',
+        'telefono' => '',
+        'email' => 'admin@erptotal.online'
+      ]);
+
+      // Contador
+      Persona::create([
+        'tipo_documento' => 'DNI',
+        'numero_documento' => '00000004',
+        'nombre' => 'Contador',
+        'apellido' => 'Contador',
+        'genero' => 'Masculino',
+        'fecha_nacimiento' => '1999-12-31',
+        'direccion' => '',
+        'telefono' => '',
+        'email' => 'cont@erptotal.online'
+      ]);
+
+      // CallCenter
+      Persona::create([
+        'tipo_documento' => 'DNI',
+        'numero_documento' => '00000005',
+        'nombre' => 'CallCenter',
+        'apellido' => 'CallCenter',
+        'genero' => 'Masculino',
+        'fecha_nacimiento' => '1999-12-31',
+        'direccion' => '',
+        'telefono' => '',
+        'email' => 'call@erptotal.online'
+      ]);
+
+      // Paciente
+      Persona::create([
+        'tipo_documento' => 'DNI',
+        'numero_documento' => '00000006',
+        'nombre' => 'Paciente',
+        'apellido' => 'Paciente',
+        'genero' => 'Masculino',
+        'fecha_nacimiento' => '1999-12-31',
+        'direccion' => '',
+        'telefono' => '',
+        'email' => 'pac@erptotal.online'
       ]);
     }
 }
