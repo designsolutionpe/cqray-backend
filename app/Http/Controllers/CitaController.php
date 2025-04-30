@@ -111,7 +111,7 @@ class CitaController extends Controller
             $cita = Cita::create($validatedCita);
 
             // Enlaza cita con sesion adquirida pendiente por paciente
-            if( $validatedCita['id_paquete'] != null )
+            if( isset($validatedCita['id_paquete']) && $validatedCita['id_paquete'] != null )
             {
                 $sesion = HistoriaClinica::where([
                     'id_articulo' => $validatedCita['id_paquete'],

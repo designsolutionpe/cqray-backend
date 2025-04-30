@@ -14,6 +14,8 @@ use Database\Seeders\QuiropracticoSeeder;
 use Database\Seeders\EstadoPacienteSeeder;
 use Database\Seeders\CategoriaArticuloSeeder;
 use Database\Seeders\UnidadMedidaArticuloSeeder;
+use Database\Seeders\RolSeeder;
+use Database\Seeders\UserSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -34,14 +36,8 @@ class DatabaseSeeder extends Seeder
             CategoriaArticuloSeeder::class,
             ArticulosSeeder::class,
             TipoPagoSeeder::class,
-        ]);
-        
-        User::factory()->create([
-            'login' => 'test',
-            'email' => 'test@test.test',
-            'rol' => 'Superadministrador',
-            'id_persona' => 1,
-            'password' => Hash::make('123456')
+            RolSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
