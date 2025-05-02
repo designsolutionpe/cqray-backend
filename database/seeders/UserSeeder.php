@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -17,7 +19,7 @@ class UserSeeder extends Seeder
             'login' => 'saidsuyv',
             'email' => 'said@erptotal.online',
             'password' => Hash::make('123456'),
-            'id_rol' => 1,
+            'rol' => "Superadministrador",
             'id_persona' => 1,
         ]);
     }

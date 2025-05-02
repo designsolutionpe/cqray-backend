@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
             CategoriaArticuloSeeder::class,
             ArticulosSeeder::class,
             TipoPagoSeeder::class,
-            RolSeeder::class,
+            //RolSeeder::class,
             UserSeeder::class,
         ]);
     }

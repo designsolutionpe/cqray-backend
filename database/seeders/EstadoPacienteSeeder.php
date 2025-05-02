@@ -20,7 +20,7 @@ class EstadoPacienteSeeder extends Seeder
             ['nombre' => 'Plan'],
             ['nombre' => 'Mantenimiento'],
             ['nombre' => 'Individual'],
-            //[ 'nombre' => 'Tratamiento'],
+            [ 'nombre' => 'Tratamiento'],
         ];
         EstadoPaciente::insert($estados);
     }
