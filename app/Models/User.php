@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Persona;
 use App\Models\Sede;
+use App\Models\Role;
 
 class User extends Authenticatable
 {
@@ -24,7 +25,7 @@ class User extends Authenticatable
         'login',
         'email',
         'password',
-        'rol',
+        'id_rol',
         'id_persona',
         'id_sede',
     ];
@@ -60,5 +61,10 @@ class User extends Authenticatable
     public function persona()
     {
         return $this->belongsTo(Persona::class, 'id_persona');
+    }
+
+    public function role()
+    {
+      return $this->belongsTo(Role::class,"id_rol");
     }
 }

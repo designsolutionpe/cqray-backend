@@ -14,7 +14,7 @@ use Database\Seeders\QuiropracticoSeeder;
 use Database\Seeders\EstadoPacienteSeeder;
 use Database\Seeders\CategoriaArticuloSeeder;
 use Database\Seeders\UnidadMedidaArticuloSeeder;
-use Database\Seeders\RolSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
             CategoriaArticuloSeeder::class,
             ArticulosSeeder::class,
             TipoPagoSeeder::class,
-            //RolSeeder::class,
+            RoleSeeder::class,
             UserSeeder::class,
         ]);
     }

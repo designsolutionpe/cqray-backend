@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -16,11 +17,19 @@ class UserSeeder extends Seeder
     {
         // Desarrollador
         User::create([
-            'login' => 'saidsuyv',
-            'email' => 'said@erptotal.online',
+            'login' => 'dev',
+            'email' => 'dev@erptotal.online',
             'password' => Hash::make('123456'),
-            'rol' => "Superadministrador",
-            'id_persona' => 1,
+            'id_rol' => 1, // Desarrollador
+            'id_persona' => 2,
+        ]);
+
+        User::create([
+          'login' => 'admin',
+          'email' => 'admin@erptotal.online',
+          'password' => Hash::make('123456'),
+          'id_rol' => 2, // Superadministrador
+          'id_persona' => 2
         ]);
     }
 }

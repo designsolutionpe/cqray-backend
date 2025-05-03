@@ -2,23 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Rol;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
-class RolController extends Controller
+class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
     {
         //
     }
@@ -34,15 +26,7 @@ class RolController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Rol $rol)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Rol $rol)
+    public function show(Role $role)
     {
         //
     }
@@ -50,7 +34,7 @@ class RolController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Rol $rol)
+    public function update(Request $request, Role $role)
     {
         //
     }
@@ -58,7 +42,7 @@ class RolController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Rol $rol)
+    public function destroy(Role $role)
     {
         //
     }

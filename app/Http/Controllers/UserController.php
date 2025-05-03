@@ -55,7 +55,8 @@ class UserController extends Controller
     
             // Obtener solo algunos campos de la persona relacionada
             $userData = $user->load([
-                'persona:id,tipo_documento,numero_documento,apellido,nombre,email,foto', // Cargar solo los campos específicos
+              'persona:id,tipo_documento,numero_documento,apellido,nombre,email,foto', // Cargar solo los campos específicos
+              'role:id,nombre'
             ]);
     
             // Concatenar el nombre completo
