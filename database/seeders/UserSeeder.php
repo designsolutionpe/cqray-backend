@@ -25,11 +25,19 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-          'login' => 'admin',
-          'email' => 'admin@erptotal.online',
-          'password' => Hash::make('123456'),
-          'id_rol' => 2, // Superadministrador
-          'id_persona' => 2
+            'login' => 'superadmin',
+            'email' => 'superadmin@erptotal.online',
+            'password' => Hash::make('123456'),
+            'id_rol' => 2, // Superadministrador
+            'id_persona' => 2
+        ]);
+
+        User::create([
+            'login' => 'admin',
+            'email' => 'admin@erptotal.online',
+            'password' => Hash::make('123456'),
+            'id_rol' => 3, // Administrador
+            'id_persona' => 2
         ]);
     }
 }

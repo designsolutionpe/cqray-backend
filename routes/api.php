@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SedeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\HorarioController;
@@ -115,6 +116,20 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::put('/tipos-pago/{tipoPago}',[TipoPagoController::class,'update']);
   Route::delete('/tipos-pago/{tipoPago}',[TipoPagoController::class,'destroy']);
 
+  // Roles
+  Route::get('/roles',[RoleController::class,'index']);
+  Route::post('/roles',[RoleController::class,'store']);
+  Route::put('/roles/{role}',[RoleController::class,'update']);
+  Route::delete('/roles/{role}',[RoleController::class,'destroy']);
+
+  // Usuarios
+  Route::get('/usuarios', [UserController::class, 'index']);
+  Route::get('/usuarios/{id}', [UserController::class, 'show']);
+  Route::post('/usuarios', [UserController::class, 'store']);
+  Route::put('/usuarios/{user}', [UserController::class, 'update']);
+  Route::delete('/usuarios/{user}', [UserController::class, 'destroy']);
+  Route::put('/usuario-persona/{user}', [UserController::class, 'updateUserAndPersona']);
+
 });
 
 Route::post('/sedes', [SedeController::class, 'store']);
@@ -129,14 +144,6 @@ Route::get('/quiropracticos', [QuiropracticoController::class, 'index']);
 Route::post('/quiropracticos', [QuiropracticoController::class, 'store']);
 Route::put('/quiropracticos/{quiropractico}', [QuiropracticoController::class, 'update']);
 Route::delete('/quiropracticos/{quiropractico}', [QuiropracticoController::class, 'destroy']);
-
-Route::get('/usuarios', [UserController::class, 'index']);
-Route::get('/usuarios/{id}', [UserController::class, 'show']);
-Route::post('/usuarios', [UserController::class, 'store']);
-Route::put('/usuarios/{usuario}', [UserController::class, 'update']);
-Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy']);
-Route::put('/usuario-persona/{user}', [UserController::class, 'updateUserAndPersona']);
-
 
 Route::get('/personas/buscar', [PersonaController::class, 'searchPersonas']);
 
