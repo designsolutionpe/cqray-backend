@@ -279,9 +279,17 @@ class CitaController extends Controller
                 'id_paciente' => $validatedCita['id_paciente'],
                 'activo' => 0
             ])->get();
+
             
             if( $historias->count() > 0 )
             {
+                if( $cita->estado == 4 )
+                {
+                    $historia_asociada = $historias->firstWhere('id_cita',$cita->id);
+                    $historia_asociada->id_cita = null;
+                    $historia_asociada->save();
+                }
+
                 \Log::info('Hay historias activas',['historias'=>$historias]);
                 // Obtiene el paquete asociado
                 $articulo = Articulo::find($historias[0]['id_articulo']);

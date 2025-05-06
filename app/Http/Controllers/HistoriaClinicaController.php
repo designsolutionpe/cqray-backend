@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Paciente;
 use Illuminate\Http\Request;
 use App\Models\HistoriaClinica;
+use Illuminate\Support\Facades\DB;
 
 class HistoriaClinicaController extends Controller
 {
@@ -72,14 +73,14 @@ class HistoriaClinicaController extends Controller
      */
     public function linkWithCita(Request $request, HistoriaClinica $historiaClinica)
     {
-        DB::begin_transction();
+        DB::beginTransaction();
         try
         {
             $validated = $request->validate([
                 "id_cita" => "required|integer|exists:citas,id",
             ]);
 
-            $historiaClinica->update($validated->all());
+            $historiaClinica->update($validated);
 
             DB::commit();
             return response()->json(["message"=>"Link completo con exito"],200);
