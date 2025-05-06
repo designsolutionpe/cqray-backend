@@ -66,6 +66,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   // Gestion de Historial Clinico
   Route::get('/historias-clinicas',[HistoriaClinicaController::class,'index']);
   Route::get('/pacientes/{paciente}/historial-clinico',[HistoriaClinicaController::class,'getHistoryByPatient']);
+  Route::put('/historias-clinicas/{historiaClinica}/link',[HistoriaClinica::class,'linkWithCita']);
 
   // Gestion de horarios
   Route::get('/horarios/disponibles', [HorarioController::class, 'horariosDisponibles']);

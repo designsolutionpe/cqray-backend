@@ -68,6 +68,30 @@ class HistoriaClinicaController extends Controller
     }
 
     /**
+     * Link Cita with specified Registro Clinico
+     */
+    public function linkWithCita(Request $request, HistoriaClinica $historiaClinica)
+    {
+        DB::begin_transction();
+        try
+        {
+            $validated = $request->validate([
+                "id_cita" => "required|integer|exists:citas,id",
+            ]);
+
+            $historiaClinica->update($validated->all());
+
+            DB::commit();
+            return response()->json(["message"=>"Link completo con exito"],200);
+        }
+        catch(\Exception $e)
+        {
+            DB::rollback();
+            return response()->json(["message"=>"Hubo un error. Intentelo mas tarde"],200);
+        }
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(HistoriaClinica $historiaClinica)
