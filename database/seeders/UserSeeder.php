@@ -16,28 +16,44 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Desarrollador
+        // User::create([
+        //     'login' => 'dev',
+        //     'email' => 'dev@erptotal.online',
+        //     'password' => Hash::make('123456'),
+        //     'id_rol' => 1, // Desarrollador
+        //     'id_persona' => 2,
+        // ]);
+
+        // User::create([
+        //     'login' => 'superadmin',
+        //     'email' => 'superadmin@erptotal.online',
+        //     'password' => Hash::make('123456'),
+        //     'id_rol' => 2, // Superadministrador
+        //     'id_persona' => 2
+        // ]);
+
+        // User::create([
+        //     'login' => 'admin',
+        //     'email' => 'admin@erptotal.online',
+        //     'password' => Hash::make('123456'),
+        //     'id_rol' => 3, // Administrador
+        //     'id_persona' => 2
+        // ]);
+
         User::create([
-            'login' => 'dev',
-            'email' => 'dev@erptotal.online',
-            'password' => Hash::make('123456'),
-            'id_rol' => 1, // Desarrollador
-            'id_persona' => 2,
+            'login' => 'ssuybate',
+            'email' => 'ssuybate@erptotal.online',
+            'password' => Hash::make('saidsuyv'),
+            'id_rol' => 1,
+            'id_persona' => 14
         ]);
 
         User::create([
-            'login' => 'superadmin',
-            'email' => 'superadmin@erptotal.online',
+            'login' => 'smestanza',
+            'email' => 'smestanza@erptotal.online',
             'password' => Hash::make('123456'),
-            'id_rol' => 2, // Superadministrador
-            'id_persona' => 2
-        ]);
-
-        User::create([
-            'login' => 'admin',
-            'email' => 'admin@erptotal.online',
-            'password' => Hash::make('123456'),
-            'id_rol' => 3, // Administrador
-            'id_persona' => 2
+            'id_rol' => 1,
+            'id_persona' => 287
         ]);
     }
 }
