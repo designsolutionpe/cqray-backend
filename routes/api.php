@@ -12,6 +12,7 @@ use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\ArticuloController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\TipoPagoController;
+use App\Http\Controllers\CajaChicaController;
 use App\Http\Controllers\EstadoCitaController;
 use App\Http\Controllers\ComprobanteController;
 use App\Http\Controllers\NotaCreditoController;
@@ -130,6 +131,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::put('/usuarios/{user}', [UserController::class, 'update']);
   Route::delete('/usuarios/{user}', [UserController::class, 'destroy']);
   Route::put('/usuario-persona/{user}', [UserController::class, 'updateUserAndPersona']);
+
+  // Caja Chica
+  Route::get('/cajachica',[CajaChicaController::class,'index']);
+  Route::post('/cajachica',[CajaChicaController::class,'store']);
+  Route::put('/cajachica/{cajaChica}',[CajaChicaController::class,'update']);
+  Route::delete('/cajachica/{cajaChica}',[CajaChicaController::class,'delete']);
 
 });
 
