@@ -80,7 +80,10 @@ class HistoriaClinicaController extends Controller
                 "id_cita" => "required|integer|exists:citas,id",
             ]);
 
-            $historiaClinica->update($validated);
+            $historiaClinica->id_cita = $validated["id_cita"];
+            $historiaClinica->save();
+
+            \Log::info("check link w/ cita",["id_cita"=> $validated,"id_reg"=>$historiaClinica]);
 
             DB::commit();
             return response()->json(["message"=>"Link completo con exito"],200);
@@ -88,7 +91,8 @@ class HistoriaClinicaController extends Controller
         catch(\Exception $e)
         {
             DB::rollback();
-            return response()->json(["message"=>"Hubo un error. Intentelo mas tarde"],200);
+            \Log::info("ERROR LOG",["message"=>$e->getMessage()]);
+            return response()->json(["message"=>"Hubo un error. Intentelo mas tarde"],500);
         }
     }
 

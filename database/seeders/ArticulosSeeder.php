@@ -17,6 +17,16 @@ class ArticulosSeeder extends Seeder
         $articulos = [
             [
                 "id_sede" => 1,
+                "id_categoria" => 3, // Consulta medica
+                "tipo_articulo" => 2,
+                "id_unidad_medida" => 2, // CONSULTA | CLS
+                "nombre" => "CONSULTA MEDICA",
+                "cantidad" => 1,
+                "detalle" => "",
+                "precio_venta" => 120.00
+            ],
+            [
+                "id_sede" => 1,
                 "id_categoria" => 1,
                 "tipo_articulo" => 2,
                 "id_unidad_medida" => 1,

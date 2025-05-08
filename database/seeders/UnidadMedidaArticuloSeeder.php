@@ -14,6 +14,10 @@ class UnidadMedidaArticuloSeeder extends Seeder
     public function run(): void
     {
         //
-        UnidadMedidaArticulo::create(['nombre'=>'SESION | SN']);
+        $unidades = [
+            [ "nombre" => "SESION | SN" ],
+            [ "nombre" => "CONSULTA | CLS" ]
+        ];
+        UnidadMedidaArticulo::insert($unidades);
     }
 }

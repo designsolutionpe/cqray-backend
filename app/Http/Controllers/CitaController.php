@@ -120,7 +120,7 @@ class CitaController extends Controller
                 $sesion = HistoriaClinica::where([
                     'id_articulo' => $validatedCita['id_paquete'],
                     'id_paciente' => $validatedCita['id_paciente'],
-                    'id_cita' => null,
+                    'ended_at' => null,
                     'activo' => 1,
                 ])->get()->first();
 
@@ -128,6 +128,7 @@ class CitaController extends Controller
 
                 if($sesion != null)
                 {
+                    \Log::info("fhecking sesion",["aa"=>$sesion]);
                     $sesion['id_cita'] = $cita->id;
     
                     $sesion->save();
@@ -165,7 +166,7 @@ class CitaController extends Controller
                 $historias_no_activas = HistoriaClinica::with(['paquete'])->where([
                     'id_paciente' => $validatedCita['id_paciente'],
                     'activo' => 0,
-                    'id_cita' => null
+                    'ended_at' => null
                 ])->get();
                 
                 if( $historias->count() > 0 )
@@ -187,6 +188,7 @@ class CitaController extends Controller
                         foreach($historias as &$historia)
                         {
                             $historia['activo'] = 0;
+                            $historia->ended_at = now();
                             $historia->save();
                         }
 
@@ -201,7 +203,7 @@ class CitaController extends Controller
                             
                             // Activa el siguiente paquete
                             $uuid_siguiente = $result[0]['uuid'];
-                            $historias_por_activar = $historias_no_activas->filter(fn($h)=>$h['uuid'] == $uuid_siguiente && $h['cita'] == null);
+                            $historias_por_activar = $historias_no_activas->filter(fn($h)=>$h['uuid'] == $uuid_siguiente && $h['ended_at'] == null);
                             \Log::info('check historias por activas',['historias'=>$historias_por_activar]);
                             foreach($historias_por_activar as &$historia)
                             {
@@ -220,6 +222,7 @@ class CitaController extends Controller
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::info("CITA STORE ERROR",["backtrace"=>$e->getMessage()]);
             return response()->json(['error' => 'Error al crear la cita: ' . $e->getMessage()], 500);
         }
     }
@@ -277,7 +280,8 @@ class CitaController extends Controller
             // en caso las actuales seran desactivadas
             $historias_no_activas = HistoriaClinica::with(['paquete'])->where([
                 'id_paciente' => $validatedCita['id_paciente'],
-                'activo' => 0
+                'activo' => 0,
+                'ended_at' => null
             ])->get();
 
             
@@ -307,6 +311,7 @@ class CitaController extends Controller
                     foreach($historias as &$historia)
                     {
                         $historia['activo'] = 0;
+                        $historia->ended_at = now();
                         $historia->save();
                     }
 
@@ -321,7 +326,7 @@ class CitaController extends Controller
                         
                         // Activa el siguiente paquete
                         $uuid_siguiente = $result[0]['uuid'];
-                        $historias_por_activar = $historias_no_activas->filter(fn($h)=>$h['uuid'] == $uuid_siguiente && $h['cita'] == null);
+                        $historias_por_activar = $historias_no_activas->filter(fn($h)=>$h['uuid'] == $uuid_siguiente&& $h["ended_at"]==null);
                         \Log::info('check historias por activas',['historias'=>$historias_por_activar]);
                         foreach($historias_por_activar as &$historia)
                         {
