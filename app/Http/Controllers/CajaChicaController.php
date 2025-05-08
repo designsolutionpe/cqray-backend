@@ -14,15 +14,15 @@ class CajaChicaController extends Controller
     public function index(Request $request)
     {
         //
-        $sede = $request->query('sede');
-        $tipo = $request->query('tipo');
+        $items = CajaChica::query();
 
-        $items = CajaChica::where([
-            'id_sede' => $sede,
-            'tipo' => isset($tipo) ? $tipo : ['Ingreso' , 'Egreso']
-        ])->get();
+        if($request->filled("sede"))
+            $items->where("id_sede",$request->query("sede"));
 
-        return response()->json($items,200);
+        if($request->filled("tipo"))
+            $items->where("tipo",$request->query("tipo"));
+
+        return response()->json($items->get(),200);
     }
 
     /**
