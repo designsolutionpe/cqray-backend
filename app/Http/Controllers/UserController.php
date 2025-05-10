@@ -22,7 +22,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::with('persona')->find($id);
+        $user = User::with(['persona','role'])->find($id);
         if (!$user) {
             return response()->json(['error' => 'Usuario no encontrado'], 404);
         }
