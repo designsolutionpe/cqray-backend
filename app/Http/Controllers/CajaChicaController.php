@@ -39,7 +39,7 @@ class CajaChicaController extends Controller
                 'tipo' => 'required|string|in:Ingreso,Egreso',
                 'balance' => 'required|numeric|min:0',
                 'id_sede' => 'required|integer|exists:sedes,id',
-                'fecha' => 'required|date'
+                'fecha' => 'required|string'
             ]);
 
             $validated['flg_inicial'] = ($estado == 'i');
