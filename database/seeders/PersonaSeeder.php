@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\User;
 use App\Models\Persona;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class PersonaSeeder extends Seeder
 {
@@ -176,82 +178,101 @@ class PersonaSeeder extends Seeder
       //   'id_persona' => 254
       // ]);
 
-      // Desarrollador
-      Persona::create([
-        'tipo_documento' => 'DNI',
-        'numero_documento' => '00000001',
-        'nombre' => 'Desarrollador',
-        'apellido' => 'Desarrollador',
-        'genero' => 'Masculino',
-        'fecha_nacimiento' => '1999-12-31',
-        'direccion' => '',
-        'telefono' => '',
-        'email' => 'des@erptotal.online'
+      // $tati = Persona::create([
+      //   'tipo_documento' => 'DNI',
+      //   'numero_documento' => '70661254',
+      //   'nombre' => 'Tatiana Stephanie',
+      //   'apellido' => 'Juárez Reyes',
+      //   'genero' => 'Femenino',
+      //   'fecha_nacimiento' => '2000-03-27',
+      //   'direccion' => '',
+      //   'telefono' => '+51940092383',
+      //   'email' => 'tatianajuarezreyes20@gmail.com'
+      // ]);
+      User::create([
+        'login' => 'tjuarez',
+        'email' => 'tatianajuarezreyes20@gmail.com',
+        'password' => Hash::make("123456"),
+        'id_rol' => 2, // Superadministrador
+        'id_persona' => 436
       ]);
 
-      // Superadministrador
-      Persona::create([
-        'tipo_documento' => 'DNI',
-        'numero_documento' => '00000002',
-        'nombre' => 'Superadministrador',
-        'apellido' => 'Superadministrador',
-        'genero' => 'Masculino',
-        'fecha_nacimiento' => '1999-12-31',
-        'direccion' => '',
-        'telefono' => '',
-        'email' => 'super@erptotal.online'
-      ]);
+      // // Desarrollador
+      // Persona::create([
+      //   'tipo_documento' => 'DNI',
+      //   'numero_documento' => '00000001',
+      //   'nombre' => 'Desarrollador',
+      //   'apellido' => 'Desarrollador',
+      //   'genero' => 'Masculino',
+      //   'fecha_nacimiento' => '1999-12-31',
+      //   'direccion' => '',
+      //   'telefono' => '',
+      //   'email' => 'des@erptotal.online'
+      // ]);
 
-      // Administrador
-      Persona::create([
-        'tipo_documento' => 'DNI',
-        'numero_documento' => '00000003',
-        'nombre' => 'Administrador',
-        'apellido' => 'Administrador',
-        'genero' => 'Masculino',
-        'fecha_nacimiento' => '1999-12-31',
-        'direccion' => '',
-        'telefono' => '',
-        'email' => 'admin@erptotal.online'
-      ]);
+      // // Superadministrador
+      // Persona::create([
+      //   'tipo_documento' => 'DNI',
+      //   'numero_documento' => '00000002',
+      //   'nombre' => 'Superadministrador',
+      //   'apellido' => 'Superadministrador',
+      //   'genero' => 'Masculino',
+      //   'fecha_nacimiento' => '1999-12-31',
+      //   'direccion' => '',
+      //   'telefono' => '',
+      //   'email' => 'super@erptotal.online'
+      // ]);
 
-      // Contador
-      Persona::create([
-        'tipo_documento' => 'DNI',
-        'numero_documento' => '00000004',
-        'nombre' => 'Contador',
-        'apellido' => 'Contador',
-        'genero' => 'Masculino',
-        'fecha_nacimiento' => '1999-12-31',
-        'direccion' => '',
-        'telefono' => '',
-        'email' => 'cont@erptotal.online'
-      ]);
+      // // Administrador
+      // Persona::create([
+      //   'tipo_documento' => 'DNI',
+      //   'numero_documento' => '00000003',
+      //   'nombre' => 'Administrador',
+      //   'apellido' => 'Administrador',
+      //   'genero' => 'Masculino',
+      //   'fecha_nacimiento' => '1999-12-31',
+      //   'direccion' => '',
+      //   'telefono' => '',
+      //   'email' => 'admin@erptotal.online'
+      // ]);
 
-      // CallCenter
-      Persona::create([
-        'tipo_documento' => 'DNI',
-        'numero_documento' => '00000005',
-        'nombre' => 'CallCenter',
-        'apellido' => 'CallCenter',
-        'genero' => 'Masculino',
-        'fecha_nacimiento' => '1999-12-31',
-        'direccion' => '',
-        'telefono' => '',
-        'email' => 'call@erptotal.online'
-      ]);
+      // // Contador
+      // Persona::create([
+      //   'tipo_documento' => 'DNI',
+      //   'numero_documento' => '00000004',
+      //   'nombre' => 'Contador',
+      //   'apellido' => 'Contador',
+      //   'genero' => 'Masculino',
+      //   'fecha_nacimiento' => '1999-12-31',
+      //   'direccion' => '',
+      //   'telefono' => '',
+      //   'email' => 'cont@erptotal.online'
+      // ]);
 
-      // Paciente
-      Persona::create([
-        'tipo_documento' => 'DNI',
-        'numero_documento' => '00000006',
-        'nombre' => 'Paciente',
-        'apellido' => 'Paciente',
-        'genero' => 'Masculino',
-        'fecha_nacimiento' => '1999-12-31',
-        'direccion' => '',
-        'telefono' => '',
-        'email' => 'pac@erptotal.online'
-      ]);
+      // // CallCenter
+      // Persona::create([
+      //   'tipo_documento' => 'DNI',
+      //   'numero_documento' => '00000005',
+      //   'nombre' => 'CallCenter',
+      //   'apellido' => 'CallCenter',
+      //   'genero' => 'Masculino',
+      //   'fecha_nacimiento' => '1999-12-31',
+      //   'direccion' => '',
+      //   'telefono' => '',
+      //   'email' => 'call@erptotal.online'
+      // ]);
+
+      // // Paciente
+      // Persona::create([
+      //   'tipo_documento' => 'DNI',
+      //   'numero_documento' => '00000006',
+      //   'nombre' => 'Paciente',
+      //   'apellido' => 'Paciente',
+      //   'genero' => 'Masculino',
+      //   'fecha_nacimiento' => '1999-12-31',
+      //   'direccion' => '',
+      //   'telefono' => '',
+      //   'email' => 'pac@erptotal.online'
+      // ]);
     }
 }
