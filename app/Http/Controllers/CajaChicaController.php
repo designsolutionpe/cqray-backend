@@ -22,6 +22,14 @@ class CajaChicaController extends Controller
         if($request->filled("tipo"))
             $items->where("tipo",$request->query("tipo"));
 
+        if($request->filled("fecha"))
+            $items->where("fecha",$request->query("fecha"));
+
+        $result = $items->get();
+
+        if( $request->query("tipo") == "Egreso" && count($result) == 0 )
+        {}
+
         return response()->json($items->get(),200);
     }
 

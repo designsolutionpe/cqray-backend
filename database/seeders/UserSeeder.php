@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
         //     'id_persona' => 2
         // ]);
 
-        User::create([
+        /*User::create([
             'login' => 'ssuybate',
             'email' => 'ssuybate@erptotal.online',
             'password' => Hash::make('saidsuyv'),
@@ -54,6 +54,6 @@ class UserSeeder extends Seeder
             'password' => Hash::make('123456'),
             'id_rol' => 1,
             'id_persona' => 287
-        ]);
+        ]);*/
     }
 }
