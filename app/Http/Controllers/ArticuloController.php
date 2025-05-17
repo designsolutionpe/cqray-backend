@@ -53,7 +53,7 @@ class ArticuloController extends Controller
             $rules = [
                 'id_sede' => 'required|integer|exists:sedes,id',
                 'id_categoria' => 'required|integer|exists:categoria_articulos,id',
-                'id_estado_paciente' => 'required|integer|exists:estado_pacientes,id',
+                'id_estado_paciente' => 'nullable|integer|exists:estado_pacientes,id',
                 'tipo_articulo' => 'required|integer|in:1,2',
                 'id_unidad_medida' => 'required|integer|exists:unidad_medida_articulos,id',
                 'nombre' => 'required|string',
@@ -113,7 +113,7 @@ class ArticuloController extends Controller
             $rules = [
                 'id_sede' => 'required|integer|exists:sedes,id',
                 'id_categoria' => 'required|integer|exists:categoria_articulos,id',
-                'id_estado_paciente' => 'required|integer|exists:estado_pacientes,id',
+                'id_estado_paciente' => 'nullable|integer|exists:estado_pacientes,id',
                 'tipo_articulo' => 'required|integer|in:1,2',
                 'id_unidad_medida' => 'required|integer|exists:unidad_medida_articulos,id',
                 'nombre' => 'required|string',
