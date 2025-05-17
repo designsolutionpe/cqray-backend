@@ -20,12 +20,29 @@ class CitaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        return response()->json(
-            Cita::with('paciente.persona','paciente.estado', 'quiropractico.persona', 'sede','estado','tipo_paciente','usuario','usuario.sede')->get(),
-            200);
+        $items = Cita::with([
+            'paciente.persona',
+            'paciente.estado', 
+            'quiropractico.persona', 
+            'sede',
+            'estado',
+            'tipo_paciente',
+            'usuario',
+            'usuario.sede'
+        ]);
+
+        if($request->filled('sede'))
+            $items->where('id_sede',$request->query('sede'));
+
+        if($request->filled('paciente'))
+            $items->where('id_paciente',$request->query('paciente'));
+
+        $result = $items->orderBy('fecha_cita','desc')->get();
+
+        return response()->json($result,200);
     }
 
     public function count(Request $request)

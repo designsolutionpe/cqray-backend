@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Database\QueryException;
 use App\Models\User;
 use App\Models\Persona;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use App\Services\CajaChicaService;
 
 class UserController extends Controller
 {
@@ -62,10 +63,18 @@ class UserController extends Controller
             // Concatenar el nombre completo
             $userData->persona->nombreCompleto = $userData->persona->apellido . ' ' . $userData->persona->nombre;
     
+            // Get Caja Chica info
+            $cajaLastItem = CajaChicaService::checkIfOpened($userData->id_sede);
+
+            $return = [
+                'user' => $userData,
+                'caja_last_item' => $cajaLastItem
+            ];
+
             // Aquí puedes devolver los datos del usuario y los datos de persona relacionados
             return response()->json([
                 'message' => 'Login exitoso',
-                'data' => $userData, // Devolver el usuario con la información de persona
+                'data' => $return, // Regresar user data y caja
                 'token' => $token
             ], 200);  // Código de éxito 200 - OK
         } catch (\Exception $e) {

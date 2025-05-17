@@ -25,12 +25,9 @@ class CajaChicaController extends Controller
         if($request->filled("fecha"))
             $items->where("fecha",$request->query("fecha"));
 
-        $result = $items->get();
+        $result = $items->orderBy('id','desc')->get();
 
-        if( $request->query("tipo") == "Egreso" && count($result) == 0 )
-        {}
-
-        return response()->json($items->get(),200);
+        return response()->json($result,200);
     }
 
     /**
@@ -44,14 +41,11 @@ class CajaChicaController extends Controller
         {
             $estado = $request->query('estado');
             $validated = $request->validate([
-                'tipo' => 'required|string|in:Ingreso,Egreso',
+                'tipo' => 'required|string|in:Inicial,Ingreso,Egreso,Terminal',
                 'balance' => 'required|numeric|min:0',
                 'id_sede' => 'required|integer|exists:sedes,id',
                 'fecha' => 'required|string'
             ]);
-
-            $validated['flg_inicial'] = ($estado == 'i');
-            $validated['flg_terminal'] = ($estado == 't');
 
             $item = CajaChica::create($validated);
             DB::commit();
@@ -83,11 +77,10 @@ class CajaChicaController extends Controller
         {
 
             $validated = $request->validate([
-                'inicial' => 'required|numeric',
-                'estado' => 'required|string|in:Ingreso,Egreso',
+                'tipo' => 'required|string|in:Inicial,Ingreso,Egreso,Terminal',
                 'balance' => 'required|numeric|min:0',
-                'cerrado_en' => 'required|string',
-                'id_sede' => 'nullable|integer|exists:sedes,id'
+                'id_sede' => 'required|integer|exists:sedes,id',
+                'fecha' => 'required|string'
             ]);
             $cajaChica->update($validated);
             DB::commit();
