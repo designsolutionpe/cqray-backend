@@ -14,6 +14,7 @@ use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\TipoPagoController;
 use App\Http\Controllers\CajaChicaController;
 use App\Http\Controllers\EstadoCitaController;
+use App\Http\Controllers\TipoSeguroController;
 use App\Http\Controllers\ComprobanteController;
 use App\Http\Controllers\NotaCreditoController;
 use App\Http\Controllers\ConfiguracionController;
@@ -137,6 +138,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('/cajachica',[CajaChicaController::class,'store']);
   Route::put('/cajachica/{cajaChica}',[CajaChicaController::class,'update']);
   Route::delete('/cajachica/{cajaChica}',[CajaChicaController::class,'delete']);
+
+  // Tipo seguro
+  Route::controller(TipoSeguroController::class)->group(function () {
+      Route::get('/tipos-seguro', 'index');
+      Route::post('/tipos-seguro', 'store');
+      Route::put('/tipos-seguro/{tipoSeguro}','update');
+      Route::delete('/tipos-seguro/{tipoSeguro}','destroy');
+  });
 
 });
 
