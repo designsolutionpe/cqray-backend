@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreign('id_persona')->references('id')->on('personas');
             $table->unsignedBigInteger('id_tipo_seguro');
             $table->foreign('id_tipo_seguro')->references('id')->on('tipo_seguros');
+            $table->unsignedBigInteger('id_sede');
+            $table->foreign('id_sede')->references('id')->on('sedes');
             $table->decimal('sueldo',8,2)->default(0);
             $table->tinyInteger('is_planilla')->default(0);
             $table->tinyInteger('is_active')->default(1);

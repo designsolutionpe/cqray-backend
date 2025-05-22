@@ -23,6 +23,7 @@ use App\Http\Controllers\EstadoPacienteController;
 use App\Http\Controllers\HistoriaClinicaController;
 use App\Http\Controllers\CategoriaArticuloController;
 use App\Http\Controllers\UnidadMedidaArticuloController;
+use App\Http\Controllers\EmpleadoController;
 
 
 //Route::get('/sedes', [SedeController::class, 'index']);
@@ -145,6 +146,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
       Route::post('/tipos-seguro', 'store');
       Route::put('/tipos-seguro/{tipoSeguro}','update');
       Route::delete('/tipos-seguro/{tipoSeguro}','destroy');
+  });
+
+  Route::controller(EmpleadoController::class)->group(function(){
+      Route::get('/empleados','index');
+    Route::post('/empleados','store');
+    Route::put('/empleados/{empleado}','update');
+    Route::delete('/empleados/{empleado}','destroy');
   });
 
 });
