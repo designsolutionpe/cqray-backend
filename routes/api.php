@@ -149,7 +149,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   });
 
   Route::controller(EmpleadoController::class)->group(function(){
-      Route::get('/empleados','index');
+    Route::get('/empleados','index');
     Route::post('/empleados','store');
     Route::put('/empleados/{empleado}','update');
     Route::delete('/empleados/{empleado}','destroy');

@@ -16,6 +16,7 @@ class Empleado extends Model
         'id_persona',
         'id_tipo_seguro',
         'id_sede',
+        'ocupacion',
         'sueldo',
         'is_planilla',
         'is_active'

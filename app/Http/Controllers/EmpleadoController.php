@@ -51,6 +51,7 @@ class EmpleadoController extends Controller
             'id_sede' => 'required|integer|exists:sedes,id',
 
             // Datos empleado
+            'ocupacion' => 'required|string',
             'sueldo' => 'required|numeric|min:0',
             'id_tipo_seguro' => 'required|integer|exists:tipo_seguros,id',
             'is_planilla' => 'required|boolean'
@@ -93,19 +94,19 @@ class EmpleadoController extends Controller
         try{
            $rules = [
                // Datos persona
-               'nombre' => 'required|string|max:255',
-               'apellido' => 'required|string|max:255',
-               'tipo_documento' => 'required|string|in:' . implode(',',Persona::tipoDocumentos()),
-               'numero_documento' => 'required|string|max:20|unique:personas,numero_documento',
-               'genero' => 'nullable|string',
-               'fecha_nacimiento' => 'nullable|date',
-               'telefono' => 'nullable|string',
-               'direccion' => 'nullable|string',
-               'email' => 'nullable|string',
+               'nombre' => 'string|max:255',
+               'apellido' => 'string|max:255',
+               'tipo_documento' => 'string|in:' . implode(',',Persona::tipoDocumentos()),
+               'numero_documento' => 'string|max:20|unique:personas,numero_documento',
+               'genero' => 'string',
+               'fecha_nacimiento' => 'date',
+               'telefono' => 'string',
+               'direccion' => 'string',
+               'email' => 'string',
                // Datos empleado
-               'sueldo' => 'required|numeric|min:0',
-               'id_tipo_seguro' => 'required|integer|exists:tipo_seguros,id',
-               'is_planilla' => 'required|boolean'
+               'sueldo' => 'numeric|min:0',
+               'id_tipo_seguro' => 'integer|exists:tipo_seguros,id',
+               'is_planilla' => 'boolean'
            ];
 
            $this->validate($request,$rules);
