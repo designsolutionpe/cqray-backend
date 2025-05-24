@@ -129,9 +129,12 @@ class ComprobanteController extends Controller
                 'monto_igv' => 'required|numeric',
                 'descuento' => 'required|numeric',
                 'total' => 'required|numeric',
+                'id_tipo_pago' => 'required|integer|exists:tipo_pagos,id',
                 'pago_cliente' => 'required|numeric',
                 'vuelto' => 'required|numeric',
                 'deuda' => 'required|numeric',
+                'id_tipo_pago_secundario' => 'nullable|integer|exists:tipo_pagos,id',
+                'pago_cliente_secundario' => 'nullable|numeric',
                 'detalles' => 'required|array|min:1',
                 'detalles.*.id_articulo' => 'required|exists:articulos,id',
                 'detalles.*.cantidad' => 'required|numeric|min:1',
@@ -139,6 +142,8 @@ class ComprobanteController extends Controller
                 'detalles.*.descuento' => 'nullable|numeric',
                 'detalles.*.total_producto' => 'required|numeric',
             ]);
+
+            \Log::info("COMPROBANTE POR CREAR",$validatedComprobante);
     
             // Crear comprobante
             $comprobante = Comprobante::create([
@@ -156,8 +161,12 @@ class ComprobanteController extends Controller
                 'monto_igv' => $validatedComprobante['monto_igv'],
                 'descuento' => $validatedComprobante['descuento'],
                 'total' => $validatedComprobante['total'],
+                'id_tipo_pago' => $validatedComprobante['id_tipo_pago'],
                 'pago_cliente' => $validatedComprobante['pago_cliente'],
                 'vuelto' => $validatedComprobante['vuelto'],
+                'deuda' => $validatedComprobante['deuda'],
+                'id_tipo_pago_secundario' => $validatedComprobante['id_tipo_pago_secundario'] ?? null,
+                'pago_cliente_secundario' => $validatedComprobante['pago_cliente_secundario'] ?? null
             ]);
     
             // GENERA SESIONES POR PACIENTE

@@ -45,7 +45,7 @@ class EmpleadoController extends Controller
             'numero_documento' => 'required|string|max:20|unique:personas,numero_documento',
             'genero' => 'nullable|string',
             'fecha_nacimiento' => 'nullable|date',
-            'telefono' => 'nullable|string',
+            'telefono' => 'nullable|integer',
             'direccion' => 'nullable|string',
             'email' => 'nullable|string',
             'id_sede' => 'required|integer|exists:sedes,id',
@@ -100,7 +100,7 @@ class EmpleadoController extends Controller
                'numero_documento' => 'string|max:20|unique:personas,numero_documento',
                'genero' => 'string',
                'fecha_nacimiento' => 'date',
-               'telefono' => 'string',
+               'telefono' => 'integer',
                'direccion' => 'string',
                'email' => 'string',
                // Datos empleado
