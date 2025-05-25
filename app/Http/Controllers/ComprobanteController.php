@@ -143,7 +143,12 @@ class ComprobanteController extends Controller
                 'detalles.*.total_producto' => 'required|numeric',
             ]);
 
-            \Log::info("COMPROBANTE POR CREAR",$validatedComprobante);
+            \Log::info("COMPROBANTE POR CREAR",[
+                "tipo_pago" => $validatedComprobante['id_tipo_pago'],
+                'pago_cliente' => $validatedComprobante['pago_cliente'],
+                "vuelto" => $validatedComprobante['vuelto'],
+                'deuda' => $validatedComprobante['deuda']
+            ]);
     
             // Crear comprobante
             $comprobante = Comprobante::create([
@@ -167,6 +172,13 @@ class ComprobanteController extends Controller
                 'deuda' => $validatedComprobante['deuda'],
                 'id_tipo_pago_secundario' => $validatedComprobante['id_tipo_pago_secundario'] ?? null,
                 'pago_cliente_secundario' => $validatedComprobante['pago_cliente_secundario'] ?? null
+            ]);
+
+            \Log::info("COMPROBANTE POR CREAR",[
+                "tipo_pago" => $comprobante->id_tipo_pago,
+                'pago_cliente' => $comprobante->pago_cliente,
+                "vuelto" => $comprobante->vuelto,
+                'deuda' => $comprobante->deuda
             ]);
     
             // GENERA SESIONES POR PACIENTE

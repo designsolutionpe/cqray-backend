@@ -14,9 +14,26 @@ class Comprobante extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tipo_comprobante', 'id_sede','tipo', 'id_persona', 'serie', 'numero', 'fecha_emision',
-        'moneda', 'tipo_cambio', 'igv', 'subtotal', 'monto_igv', 'descuento',
-        'total', 'pago_cliente', 'vuelto'
+        'tipo_comprobante',
+        'id_sede',
+        'tipo',
+        'id_persona',
+        'serie',
+        'numero',
+        'fecha_emision',
+        'moneda',
+        'tipo_cambio',
+        'igv',
+        'subtotal',
+        'monto_igv',
+        'descuento',
+        'total',
+        'id_tipo_pago',
+        'pago_cliente',
+        'vuelto',
+        'deuda',
+        'id_tipo_pago_secundario',
+        'pago_cliente_secundario'
     ];
 
     public function detalles()
@@ -32,5 +49,15 @@ class Comprobante extends Model
     public function sede()
     {
         return $this->belongsTo(Sede::class, 'id_sede');
+    }
+
+    public function tipo_pago()
+    {
+        return $this->belongsTo(TipoPago::class,'id_tipo_pago');
+    }
+
+    public function tipo_pago_secundario()
+    {
+        return $this->belongsTo(TipoPago::class,'id_tipo_pago_secundario');
     }
 }
