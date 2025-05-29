@@ -1,5 +1,6 @@
 <?php
 
+namespace App\Services;
 use App\Models\Comprobante;
 
 class ComprobanteService
@@ -11,7 +12,7 @@ class ComprobanteService
         {
             $this->comprobante = $comprobante;
             if($this->verificarDeuda()) return;
-            $this->generarSesiones();
+            // $this->generarSesiones();
         }
     }
 
@@ -33,8 +34,6 @@ class ComprobanteService
 
     protected function verificarDeuda()
     {
-        $sesiones = HistoriaClinica::where([
-            
-        ]);
+        \Log::info('VERIFICAR DEUDA',["data" => $this->comprobante]);
     }
 }

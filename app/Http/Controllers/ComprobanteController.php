@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ComprobanteService;
 use App\Models\Articulo;
 use App\Models\Paciente;
 use App\Models\Comprobante;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use App\Models\HistoriaClinica;
+use Illuminate\Validation\Rule;
 use App\Models\DetalleComprobante;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\ComprobanteResource;
 
 class ComprobanteController extends Controller
 {
+    protected $comprobanteService;
+    public function __construct(ComprobanteService $comprobanteSrv)
+    {
+        $this->comprobanteService = $comprobanteSrv;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -166,6 +172,8 @@ class ComprobanteController extends Controller
                 'id_tipo_pago_secundario' => $validatedComprobante['id_tipo_pago_secundario'] ?? null,
                 'pago_cliente_secundario' => $validatedComprobante['pago_cliente_secundario'] ?? null
             ]);
+
+            $this->comprobanteService->handler($comprobante);
     
             // GENERA SESIONES POR PACIENTE
             // **NO BORRAR**
