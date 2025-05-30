@@ -15,4 +15,9 @@ trait ApiResponser
     {
         return response()->json(["error"=>$message,"code"=>$code]);
     }
+
+    public function exceptionResponse($message,$code = Response::HTTP_INTERNAL_SERVER_ERROR)
+    {
+        return response()->json(['error'=>$message],$code);
+    }
 }

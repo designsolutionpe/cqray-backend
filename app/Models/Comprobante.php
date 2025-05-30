@@ -36,6 +36,16 @@ class Comprobante extends Model
         'pago_cliente_secundario'
     ];
 
+    public static function tipoComprobante()
+    {
+        return [
+            '1' => 'B001',
+            '2' => 'F001',
+            '3' => 'N001',
+            '4' => 'CP01'
+        ];
+    }
+
     public function detalles()
     {
         return $this->hasMany(DetalleComprobante::class, 'id_comprobante');

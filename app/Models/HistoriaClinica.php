@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Cita;
 use App\Models\Articulo;
 use App\Models\Paciente;
+use App\Models\Comprobante;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -22,7 +23,8 @@ class HistoriaClinica extends Model
         'id_articulo',
         'estado_pago',
         'activo',
-        'uuid'
+        'uuid',
+        'id_comprobante'
     ];
 
     public function paciente()
@@ -43,5 +45,10 @@ class HistoriaClinica extends Model
     public function paquete()
     {
         return $this->belongsTo(Articulo::class,'id_articulo');
+    }
+
+    public function comprobante()
+    {
+        return $this->belongsTo(Comprobante::class,'id_comprobante');
     }
 }

@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ComprobanteService;
+use App\Models\Persona;
 use App\Models\Articulo;
 use App\Models\Paciente;
 use App\Models\Comprobante;
+use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use App\Models\HistoriaClinica;
 use Illuminate\Validation\Rule;
 use App\Models\DetalleComprobante;
 use Illuminate\Support\Facades\DB;
+use App\Services\ComprobanteService;
 use App\Http\Resources\ComprobanteResource;
 
 class ComprobanteController extends Controller
 {
+    use ApiResponser;
     protected $comprobanteService;
     public function __construct(ComprobanteService $comprobanteSrv)
     {
@@ -96,6 +99,41 @@ class ComprobanteController extends Controller
             ->setStatusCode(200);
     }
 
+    public function verificationPersonDebt(Persona $persona)
+    {
+        try
+        {
+            \Log::info("CHECK PERSONA",["persona"=>$persona]);
+            $idPersona = $persona['id'];
+            \Log::info("ID PERSONA",["id" => $idPersona]);
+            $paciente = Paciente::where(['id_persona'=>$idPersona])->first();
+            \Log::info("CHECK PACIENTE",["paciente"=>$paciente]);
+            if(!$paciente) return $this->errorResponse("No se ha encontrado a la persona",404);
+
+            $deuda = HistoriaClinica::with("comprobante:id,deuda")->where([
+                'id_paciente' => $paciente->id,
+                'activo' => 1,
+                'estado_pago' => 2
+            ])
+            ->get()
+            ->unique("uuid")
+            ->map( function ($item) {
+                return [
+                    'id_articulo' => $item->id_articulo,
+                    'deuda' => $item->comprobante?->deuda ?? 0
+                ];
+            })
+            ->values();
+
+            return $this->successResponse($deuda);
+        }
+        catch(\Exception $e)
+        {
+            \Log::error("ALGO SALIO MAL!!! ComprobanteController:118 -> " . $e->getMessage());
+            return $this->exceptionResponse("Hubo un error verificacion la deuda de la persona especificada");
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -118,15 +156,6 @@ class ComprobanteController extends Controller
                 'id_sede' => 'required|exists:sedes,id',
                 'tipo' => 'required|integer',
                 'id_persona' => 'required|exists:personas,id',
-                'serie' => 'required|string|max:10',
-                'numero' => [
-                    'required',
-                    'string',
-                    'max:10',
-                    Rule::unique('comprobantes')->where(function ($query) use ($request) {
-                        return $query->where('serie', $request->serie);
-                    }),
-                ],
                 'fecha_emision' => 'required|date',
                 'moneda' => 'required|in:PEN,USD',
                 'tipo_cambio' => 'nullable|numeric',
@@ -148,15 +177,29 @@ class ComprobanteController extends Controller
                 'detalles.*.descuento' => 'nullable|numeric',
                 'detalles.*.total_producto' => 'required|numeric',
             ]);
-    
+            
+            // $this->comprobanteService->handler($validatedComprobante);
+
+            $serie = Comprobante::tipoComprobante()[$validatedComprobante['tipo_comprobante']];
+            $ultimoNumeroSerie = DB::table('comprobantes')->select('numero')->orderBy('numero','desc')->limit(1)->value('numero');
+            if(!$ultimoNumeroSerie)
+            {
+                $nuevoNumeroSerie = '00000001';
+            }
+            else
+            {
+                $nuevoNumero = (int) $ultimoNuevoSerie + 1;
+                $nuevoNumeroSerie = str_pad($nuevoNumero, strlen($ultimoNuevoSerie),'0',STR_PAD_LEFT);
+            }
+
             // Crear comprobante
             $comprobante = Comprobante::create([
                 'tipo_comprobante' => $validatedComprobante['tipo_comprobante'],
                 'id_sede' => $validatedComprobante['id_sede'],
                 'tipo' => $validatedComprobante['tipo'],
                 'id_persona' => $validatedComprobante['id_persona'],
-                'serie' => $validatedComprobante['serie'],
-                'numero' => $validatedComprobante['numero'],
+                'serie' => $serie,
+                'numero' => $nuevoNumeroSerie,
                 'fecha_emision' => $validatedComprobante['fecha_emision'],
                 'moneda' => $validatedComprobante['moneda'],
                 'tipo_cambio' => $validatedComprobante['tipo_cambio'] ?? null,
@@ -173,7 +216,6 @@ class ComprobanteController extends Controller
                 'pago_cliente_secundario' => $validatedComprobante['pago_cliente_secundario'] ?? null
             ]);
 
-            $this->comprobanteService->handler($comprobante);
     
             // GENERA SESIONES POR PACIENTE
             // **NO BORRAR**
@@ -232,7 +274,8 @@ class ComprobanteController extends Controller
                             'id_articulo' => $articulo->id,
                             'estado_pago' => $estado_pago,
                             'activo' => $no_hay_activo,
-                            'uuid' => $uuid
+                            'uuid' => $uuid,
+                            'id_comprobante' => $comprobante->id
                         ]);
                     }
                     $no_hay_activo=0;
