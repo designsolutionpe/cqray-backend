@@ -14,6 +14,7 @@ use App\Models\DetalleComprobante;
 use Illuminate\Support\Facades\DB;
 use App\Services\ComprobanteService;
 use App\Http\Resources\ComprobanteResource;
+use App\Services\PDFService;
 
 class ComprobanteController extends Controller
 {
@@ -177,9 +178,6 @@ class ComprobanteController extends Controller
                 'detalles.*.descuento' => 'nullable|numeric',
                 'detalles.*.total_producto' => 'required|numeric',
             ]);
-
-            \Log::info('check comprobante',['comprobante'=>$validatedComprobante]);
-            return $this->exceptionResponse(false);
             
             // $this->comprobanteService->handler($validatedComprobante);
 
