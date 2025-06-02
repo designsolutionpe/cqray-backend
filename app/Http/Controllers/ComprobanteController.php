@@ -177,19 +177,19 @@ class ComprobanteController extends Controller
                 'detalles.*.descuento' => 'nullable|numeric',
                 'detalles.*.total_producto' => 'required|numeric',
             ]);
+
+            \Log::info('check comprobante',['comprobante'=>$validatedComprobante]);
+            return $this->exceptionResponse(false);
             
             // $this->comprobanteService->handler($validatedComprobante);
 
             $serie = Comprobante::tipoComprobante()[$validatedComprobante['tipo_comprobante']];
             $ultimoNumeroSerie = DB::table('comprobantes')->select('numero')->orderBy('numero','desc')->limit(1)->value('numero');
-            if(!$ultimoNumeroSerie)
+            $nuevoNumeroSerie = '00000001';
+            if($ultimoNumeroSerie)
             {
-                $nuevoNumeroSerie = '00000001';
-            }
-            else
-            {
-                $nuevoNumero = (int) $ultimoNuevoSerie + 1;
-                $nuevoNumeroSerie = str_pad($nuevoNumero, strlen($ultimoNuevoSerie),'0',STR_PAD_LEFT);
+                $nuevoNumero = (int) $ultimoNumeroSerie + 1;
+                $nuevoNumeroSerie = str_pad($nuevoNumero, strlen($ultimoNumeroSerie),'0',STR_PAD_LEFT);
             }
 
             // Crear comprobante
