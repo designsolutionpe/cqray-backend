@@ -280,9 +280,35 @@ class ComprobanteController extends Controller
             }*/
             }
 
+            $voucherType = "constancia_pago_voucher";
+
+            switch($validatedComprobante['tipo_comprobante'])
+            {
+                case 1:
+                    $voucherType = "boleta_voucher";
+                    break;
+                case 2:
+                    $voucherType = "factura_voucher";
+                    break;
+                case 3:
+                    $voucherType = "nota_credito_voucher";
+                    break;
+                case 4:
+                    $voucherType = "constancia_pago_voucher";
+                    break;
+            }
+
+            $validatedComprobante['serie'] = $comprobante->serie;
+            $validatedComprobante['numero_correlativo'] = $comprobante->numero;
+
+            $url = PDFService::generateVoucher($voucherType,$validatedComprobante);
             $this->comprobanteService->handler($validatedComprobante,$comprobante);
 
+            $comprobante->voucher_url = $url;
+
             DB::commit();
+
+            return $this->successResponse(['voucher_url' => $url, 'success' => true]);
     
             // Recargar relaciones y devolver con el resource
             $comprobante->load(['detalles', 'persona', 'sede']);
