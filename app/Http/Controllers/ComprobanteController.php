@@ -214,7 +214,7 @@ class ComprobanteController extends Controller
                 'pago_cliente_secundario' => $validatedComprobante['pago_cliente_secundario'] ?? null
             ]);
 
-    
+            /*
             // GENERA SESIONES POR PACIENTE
             // **NO BORRAR**
             $paciente_exists = true;
@@ -242,7 +242,7 @@ class ComprobanteController extends Controller
                 // sesiones del paquete actualmente activo
                 if( $historial_paciente->count() > 0 )
                   $no_hay_activo = 0;
-            }
+            }*/
             
             // Crear detalles
             foreach ($validatedComprobante['detalles'] as $detalle) {
@@ -255,7 +255,8 @@ class ComprobanteController extends Controller
                     'total_producto' => $detalle['total_producto'],
                 ]);
             
-    
+
+            /*
             // GENERA HISTORIAL Y SESIONES
             // **NO BORRAR**
             if( $validatedComprobante['tipo'] == '2' && $paciente_exists )
@@ -277,8 +278,10 @@ class ComprobanteController extends Controller
                         ]);
                     }
                     $no_hay_activo=0;
-                }
+            }*/
             }
+
+            $this->comprobanteService->handler($validatedComprobante,$comprobante);
 
             DB::commit();
     

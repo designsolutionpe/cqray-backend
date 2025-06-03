@@ -5,11 +5,10 @@ use App\Models\Paciente;
 use App\Models\Comprobante;
 use App\Helpers\MonedaHelper;
 use App\Models\HistoriaClinica;
+use App\Models\Articulo;
 
 class ComprobanteService
 {
-    protected $comprobante;
-
     /**
      * Function: handler
      * Description:
@@ -20,93 +19,132 @@ class ComprobanteService
      *            realizado
      *          - Generar sesiones para pacientes
      */
-    public function handler($comprobante)
+    public function handler($post,$stored)
     {
-        $paciente = Paciente::where('id_persona',$comprobante['id_persona']);
+        $paciente = Paciente::where('id_persona',$post['id_persona'])->first();
         if(
-            $comprobante['tipo'] == "2" && // Servicio
-            $paciente->exists()
+            $post['tipo'] == "2" && // Servicio
+            $paciente
         )
         {
-            $this->comprobante = $comprobante;
+            // VERIFICA SI LOS PAQUETES PASADOS SON ACTIVOS
+            // Y CON DEUDA
 
-            // VERIFICA SI TIENE ALGUN PAQUETE ACTIVO
-
-            $paquete_activo = HistoriaClinica::where([
-                'id_paciente' => $paciente->id,
-                'activo' => 1
-            ]);
-
-            // Si tiene un paquete activo, verifica los detalles
-            if($paquete_activo->exists())
+            foreach($post["detalles"] as $detalle)
             {
-                // Verifica si los detalles tiene un paquete
-                // en deuda, y si no, genera mas paquetes inactivos
-                foreach($comprobante['detalle'] as $detalle)
+
+                $paquetes = HistoriaClinica::where([
+                    'id_paciente' => $paciente->id,
+                    'activo' => 1
+                ])->get();
+
+                // Hay paquetes activos
+                if($paquetes->isNotEmpty())
                 {
-                    // Si es que el paquete activo, tiene deuda
-                    // salda la deuda o la regula y continua con el siguiente
-                    // paquete
-                    if($this->verificarDeuda($detalle)) continue;
-                    // Si el paquete activo, no tiene deuda
-                    // genera otro paquete en estado inactivo
-                    // else $this->generaPaqueteInactivo($detalle);
+                    $paquete_activo = $paquetes->first();
+                    // Si el paquete activo esta en deuda
+                    // y es igual al paquete del detalle:
+                    //  - Regularizar con lo pagado
+                    if($paquete_activo->estado_pago == 2 && $paquete_activo->id_articulo == $detalle['id_articulo'])
+                    {
+                    $ref = Comprobante::find($paquete_activo->id_comprobante);
+                    if($this->calcularDeuda(
+                        $ref['deuda'],
+                        $post['pago_cliente'],
+                        $post['pago_cliente_secundario'] ?? 0
+                    ))
+                    {
+                        HistoriaClinica::where('uuid',$paquete_activo->uuid)->update(['estado_pago'=>1]);
+                    }
+                    }
+                    // Si no hay deuda y/o no es el paquete:
+                    //  - Guarda como paquete inactivo
+                    //    ya que existe un paquete activo
+                    else
+                    {
+                        $articulo = Articulo::find($detalle['id_articulo']);
+
+                        $estado_pago = $this->calcularDeuda(
+                            $post['total'],
+                            $post['pago_cliente'],
+                            $post['pago_cliente_secundario'] ?? 0
+                        ) ? 1 : 2;
+
+                        $this->generarPaquetes(
+                            $paciente->id,
+                            $detalle['id_articulo'],
+                            $post['id_sede'],
+                            $stored->id,
+                            $estado_pago,
+                            0,
+                            $articulo->cantidad
+                        );
+                    }
+
+                    // Guarda paquete en modo inactivo
+                }
+                // Si no hay paquete activo
+                else
+                {
+                    $articulo = Articulo::find($detalle['id_articulo']);
+                    $estado_pago = $this->calcularDeuda(
+                        $post['total'],
+                        $post['pago_cliente'],
+                        $post['pago_cliente_secundario'] ?? 0
+                    ) ? 1 : 2;
+
+                    $this->generarPaquetes(
+                        $paciente->id,
+                        $detalle['id_articulo'],
+                        $post['id_sede'],
+                        $stored->id,
+                        $estado_pago,
+                        1,
+                        $articulo->cantidad
+                    );
                 }
             }
-            // Si el paciente no tiene paquetes activos,
-            // verifica que no tenga deudas anteriores
-            // si no tiene genera el paquete activo y los demas
-            // en inactivos
-            // si si tiene deudas, no genera ningun paquete
         }
     }
 
-    /*
-     * Function Name: verificarDeuda
-     * Description:
-     *      Verifica si existe una sesion con las
-     *      siguientes condiciones:
-     *
-     *          - Es el mismo paquete
-     *          - Este en deuda
-     *          - Este activo
-     *
-     *      en caso se cumplan las condiciones, el
-     *      monto pagado en el comprobante pasa a
-     *      restar la deuda actual en el paquete
-     *      activo
-     * */
-
-    protected function verificarDeuda($detalle)
+    protected function calcularDeuda($deuda,$pago_pr,$pago_sc)
     {
-            \Log::info("DETALLE",["data"=>$detalle]);
-            $sesiones = HistoriaClinica::where([
-                'id_articulo' => $detalle['id_articulo'],
-                'estado_pago' => 2,
-                'activo' => 1,
-            ])->get();
+        $deuda = MonedaHelper::convertirDineroAEntero($deuda);
+        $pago_pr = MonedaHelper::convertirDineroAEntero($pago_pr);
+        $pago_sc = MonedaHelper::convertirDineroAEntero($pago_sc);
+        $total = $pago_pr + $pago_sc;
+        \Log::info("CALCULAR DEUDA8",["total"=>$total,"deuda"=>$deuda]);
+        return ($total >= abs($deuda));
+    }
 
-            if(count($sesiones) == 0) return false;
-
-            foreach($sesiones as $sesion)
-            {
-                $comprobanteRef = Comprobante::find($sesion->id_comprobante);
-                if(!$comprobanteRef)
-                {
-                    \Log::info("COMPROBANTE DE DETALLE ES NULL",["ID COMPROBANTE"=>$sesion->id_comprobante,"SESION/HISTORIA CLINICA" => $sesion->id]);
-                    continue;
-                }
-
-                $deuda = MonedaHelper::convertirDineroAEntero($comprobanteRef->deuda);
-                $pago_cliente = MonedaHelper::convertirDineroAEntero($this->comprobante['pago_cliente']);
-                $pago_cliente_sec = MonedaHelper::convertirDineroAEntero($this->comprobante['pago_cliente_secundario'] ?? 0);
-                $total_pago = $pago_cliente + $pago_cliente_sec;
-                
-                if($total_pago >= abs($deuda)) // Deuda saldada
-                {
-                    // AQUI DEBERIA ACTUALIZAR EL CAMPO 'estado_pago' A 1
-                    HistoriaClinica::where('id',$sesion->id)->update('estado_pago',1);
-                }
-            }
+    /**
+     * Function Name: generarPaquetes
+     * Description:
+     *      Genera paquetes al paciente
+     *      especificado
+    **/
+    protected function generarPaquetes(
+        $id_paciente,
+        $id_articulo,
+        $id_sede,
+        $id_comprobante,
+        $estado_pago,
+        $activo,
+        $cantidad_total
+    )
+    {
+        $uuid = bin2hex(random_bytes(16));
+        for($n = 0; $n < $cantidad_total; $n++)
+        {
+            HistoriaClinica::create([
+                'id_paciente' => $id_paciente,
+                'id_sede' => $id_sede,
+                'id_articulo' => $id_articulo,
+                'estado_pago' => $estado_pago,
+                'activo' => $activo,
+                'uuid' => $uuid,
+                'id_comprobante' => $id_comprobante
+            ]);
+        }
     }
 }
