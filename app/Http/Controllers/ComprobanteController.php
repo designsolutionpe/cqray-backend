@@ -113,7 +113,6 @@ class ComprobanteController extends Controller
 
             $deuda = HistoriaClinica::with("comprobante:id,deuda")->where([
                 'id_paciente' => $paciente->id,
-                'activo' => 1,
                 'estado_pago' => 2
             ])
             ->get()
