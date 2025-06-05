@@ -304,7 +304,8 @@ class ComprobanteController extends Controller
             $url = PDFService::generateVoucher($voucherType,$validatedComprobante);
             $this->comprobanteService->handler($validatedComprobante,$comprobante);
 
-            $comprobante->voucher_url = $url;
+            $comprobante["voucher_url"] = $url;
+            $comprobante->save();
 
             DB::commit();
 

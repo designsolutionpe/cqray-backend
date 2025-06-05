@@ -47,6 +47,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   // Gestion de citas
   Route::get('/citas/estados',[EstadoCitaController::class,'index']);
   Route::get('/citas', [CitaController::class, 'index']);
+  Route::get('/citas-paciente',[CitaController::class,'getCitasForSelect']);
   Route::get('/citas/count',[CitaController::class,'count']);
   Route::post('/citas', [CitaController::class, 'store']);
   Route::put('/citas/{cita}', [CitaController::class, 'update']);

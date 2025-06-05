@@ -33,7 +33,8 @@ class Comprobante extends Model
         'vuelto',
         'deuda',
         'id_tipo_pago_secundario',
-        'pago_cliente_secundario'
+        'pago_cliente_secundario',
+        'voucher_url'
     ];
 
     public static function tipoComprobante()

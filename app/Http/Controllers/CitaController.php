@@ -34,15 +34,24 @@ class CitaController extends Controller
             'usuario.sede'
         ]);
 
-        if($request->filled('sede'))
-            $items->where('id_sede',$request->query('sede'));
-
-        if($request->filled('paciente'))
-            $items->where('id_paciente',$request->query('paciente'));
-
         $result = $items->orderBy('fecha_cita','desc')->get();
 
         return response()->json($result,200);
+    }
+
+    public function getCitasForSelect(Request $request)
+    {
+        $items = Cita::with([
+            'paciente.persona',
+            'paciente.estado',
+            'sede'
+        ]);
+
+        $items->where('id_sede',$request->query("sede"));
+        $items->where('id_paciente',$request->query('paciente'));
+        $res = $items->orderBy('fecha_cita','desc')->get();
+
+        return response()->json($res,200);
     }
 
     public function count(Request $request)
@@ -132,7 +141,7 @@ class CitaController extends Controller
             \Log::info('cita',['check'=>$cita]);
 
             // Enlaza cita con sesion adquirida pendiente por paciente
-            if( isset($validatedCita['id_paquete']) && $validatedCita['id_paquete'] != null )
+            if( !empty($validatedCita['id_paquete']) )
             {
                 $sesion = HistoriaClinica::where([
                     'id_articulo' => $validatedCita['id_paquete'],
@@ -143,12 +152,24 @@ class CitaController extends Controller
 
                 \Log::info('sesion',['data'=>$sesion]);
 
-                if($sesion != null)
+                if(!empty($session) && !empty($cita))
                 {
-                    \Log::info("fhecking sesion",["aa"=>$sesion]);
-                    $sesion['id_cita'] = $cita->id;
+                    \Log::info("PREVIO A ACCEDER A ID - VERDAFERO", [
+                            'cita_id' => $cita?->id,
+                                'sesion_class' => is_object($sesion) ? get_class($sesion) : gettype($sesion),
+                                    'sesion' => $sesion,
+                    ]);
+                    $sesion->id_cita = $cita->id;
     
                     $sesion->save();
+                }
+                else
+                {
+                    \Log::info("PREVIO A ACCEDER A ID - FALSO", [
+                            'cita_id' => $cita?->id,
+                                'sesion_class' => is_object($sesion) ? get_class($sesion) : gettype($sesion),
+                                    'sesion' => $sesion,
+                    ]);
                 }
 
                 // Cambiar el estado del paciente
@@ -159,6 +180,10 @@ class CitaController extends Controller
                 $articulo = Articulo::find($validatedCita['id_paquete']);
                 $estados = EstadoPaciente::all();
 
+                //if( !empty($articulo->id_estado_paciente) )
+                //{
+                //
+
                 $estado_articulo = $estados->filter( fn($s) => $s->id == $articulo->id_estado_paciente )->first();
 
                 \Log::info('estado articulo',['estado'=>$estado_articulo->id,'estados'=>$estados]);
@@ -168,6 +193,7 @@ class CitaController extends Controller
 
                 $cita->save();
                 $paciente->save();
+                //}
             }
 
             if( $validatedCita['estado'] == 3 )

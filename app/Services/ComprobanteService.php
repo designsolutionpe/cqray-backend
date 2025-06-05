@@ -44,102 +44,43 @@ class ComprobanteService
                 // Hay paquetes
                 if($paquetes->isNotEmpty())
                 {
-                    foreach($paquetes as $paquete)
-                    {
-                        // El paquete es el mismo del detalle
-                        if($paquete->id_articulo == $detalle['id_articulo'])
-                        {
-                            // Verifica si tiene deuda
-                            if($paquete->estado_pago == 2)
-                            {
-                                $ref = Comprobante::find($paquete_activo->id_comprobante);
-                                if($this->calcularDeuda(
-                                    $ref['deuda'],
-                                    $post['pago_cliente'],
-                                    $post['pago_cliente_secundario'] ?? 0
-                                ))
-                                {
-                                    HistoriaClinica::where('uuid',$paquete_activo->uuid)->update(['estado_pago'=>1]);
-                                }
-                            }
-                            // Si el paquete no tiene deuda
-                            // ingresa el paquete
-                            else
-                            {
-                                $articulo = Articulo::find($detalle['id_articulo']);
-                                $estado_pago = $this->calcularDeuda(
-                                    $post['total'],
-                                    $post['pago_cliente'],
-                                    $post['pago_cliente_secundario'] ?? 0
-                                ) ? 1 : 2;
+                    // Filtra por detalle actual
+                    $paquete_detalle = $paquetes->filter(fn($p) => $p->id_articulo == $detalle['id_articulo']);
+                    $paquete_deuda = $paquete_detalle->where("estado_pago",2)->groupBy("uuid")->keys()->first();
+                    // Verifica hay activos
+                    $paquete_activo = $paquete_detalle->contains(fn($p) => $p->activo );
 
-                                $this->generarPaquetes(
-                                    $paciente->id,
-                                    $detalle['id_articulo'],
-                                    $post['id_sede'],
-                                    $stored->id,
-                                    $estado_pago,
-                                    $tieneActivos ? 0 : 1,
-                                    $articulo->cantidad
-                                );
-                            }
-                        }
-                    }
-                    $paquete_activo = $paquetes->first();
-                    // Si el paquete activo esta en deuda
-                    // y es igual al paquete del detalle:
-                    //  - Regularizar con lo pagado
-                    if($paquete_activo->estado_pago == 2 && $paquete_activo->id_articulo == $detalle['id_articulo'])
+                    if($paquete_deuda)
                     {
-                        $ref = Comprobante::find($paquete_activo->id_comprobante);
                         if($this->calcularDeuda(
-                            $ref['deuda'],
+                            $stored['deuda'],
                             $post['pago_cliente'],
-                            $post['pago_cliente_secundario'] ?? 0
+                            $post['pago_cliente_secundario']
                         ))
                         {
-                            HistoriaClinica::where('uuid',$paquete_activo->uuid)->update(['estado_pago'=>1]);
+                            HistoriaClinica::where("uuid",$paquete_deuda)->update(["estado_pago"=>1]);
+                            continue;
                         }
                     }
-                    // Si no hay deuda y/o no es el paquete:
-                    //  - Guarda como paquete inactivo
-                    //    ya que existe un paquete activo
                     else
                     {
-                        // Si el paquete activo esta en deuda
-                        // y es igual al paquete del detalle:
-                        //  - Regularizar con lo pagado
-                        if($paquete_activo->estado_pago == 2 && $paquete_activo->id_articulo == $detalle['id_articulo'])
-                        {
-                            $ref = Comprobante::find($paquete_activo->id_comprobante);
-                            if($this->calcularDeuda(
-                                $ref['deuda'],
-                                $post['pago_cliente'],
-                                $post['pago_cliente_secundario'] ?? 0
-                            ))
-                            {
-                                HistoriaClinica::where('uuid',$paquete_activo->uuid)->update(['estado_pago'=>1]);
-                            }
-                        }
                         $articulo = Articulo::find($detalle['id_articulo']);
-
                         $estado_pago = $this->calcularDeuda(
                             $post['total'],
                             $post['pago_cliente'],
-                            $post['pago_cliente_secundario'] ?? 0
+                            $post['pago_cliente_secundario']
                         ) ? 1 : 2;
 
                         $this->generarPaquetes(
                             $paciente->id,
-                            $detalle['id_articulo'],
+                            $post['id_articulo'],
                             $post['id_sede'],
                             $stored->id,
                             $estado_pago,
-                            0,
+                            $paquete_activo ? 0 : 1,
                             $articulo->cantidad
                         );
                     }
-
                     // Guarda paquete en modo inactivo
                 }
                 // Si no hay paquetes
