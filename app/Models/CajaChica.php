@@ -16,6 +16,7 @@ class CajaChica extends Model
         'fecha',
         'flg_inicial',
         'flg_terminal',
+        'motivo'
     ];
 
     public function sede()

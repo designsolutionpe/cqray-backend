@@ -44,7 +44,8 @@ class CajaChicaController extends Controller
                 'tipo' => 'required|string|in:Inicial,Ingreso,Egreso,Terminal',
                 'balance' => 'required|numeric|min:0',
                 'id_sede' => 'required|integer|exists:sedes,id',
-                'fecha' => 'required|string'
+                'fecha' => 'required|string',
+                'motivo' => 'required|string'
             ]);
 
             $item = CajaChica::create($validated);
@@ -80,7 +81,8 @@ class CajaChicaController extends Controller
                 'tipo' => 'required|string|in:Inicial,Ingreso,Egreso,Terminal',
                 'balance' => 'required|numeric|min:0',
                 'id_sede' => 'required|integer|exists:sedes,id',
-                'fecha' => 'required|string'
+                'fecha' => 'required|string',
+                'motivo' => 'required|string'
             ]);
             $cajaChica->update($validated);
             DB::commit();

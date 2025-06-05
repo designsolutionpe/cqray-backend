@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Persona;
 use App\Models\Articulo;
 use App\Models\Paciente;
+use App\Models\CajaChica;
 use App\Models\Comprobante;
+use App\Services\PDFService;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use App\Models\HistoriaClinica;
@@ -14,7 +16,6 @@ use App\Models\DetalleComprobante;
 use Illuminate\Support\Facades\DB;
 use App\Services\ComprobanteService;
 use App\Http\Resources\ComprobanteResource;
-use App\Services\PDFService;
 
 class ComprobanteController extends Controller
 {
@@ -306,6 +307,14 @@ class ComprobanteController extends Controller
 
             $comprobante["voucher_url"] = $url;
             $comprobante->save();
+
+            CajaChica::create([
+                'tipo' => 'Ingreso',
+                'balance' => $comprobante['total'],
+                'id_sede' => $validatedComprobante['id_sede'],
+                'fecha' => $validatedComprobante['fecha_emision'],
+                'motivo' => 'Venta'
+            ]);
 
             DB::commit();
 
