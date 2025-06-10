@@ -78,16 +78,17 @@ class ComprobanteService
                     }
                     else
                     {
+                        \Log::info("CHECK ARTICULO",['arti' => $detalle]);
                         $articulo = Articulo::find($detalle['id_articulo']);
                         $estado_pago = $this->calcularDeuda(
-                            $post['total'],
+                            $stored['deuda'],
                             $post['pago_cliente'],
                             $post['pago_cliente_secundario'] ?? 0
                         ) ? 1 : 2;
 
                         $this->generarPaquetes(
                             $paciente->id,
-                            $post['id_articulo'],
+                            $detalle['id_articulo'],
                             $post['id_sede'],
                             $stored->id,
                             $estado_pago,

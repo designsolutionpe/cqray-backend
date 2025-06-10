@@ -182,10 +182,6 @@ class ComprobanteController extends Controller
                 'detalles.*.total_producto' => 'required|numeric',
             ]);
 
-            //\Log::info("CHECK CLIENTE PAGO SEC",["pago"=>$validatedComprobante['pago_cliente_secundario']]);
-            
-            // $this->comprobanteService->handler($validatedComprobante);
-
             $serie = Comprobante::tipoComprobante()[$validatedComprobante['tipo_comprobante']];
             $ultimoNumeroSerie = DB::table('comprobantes')->select('numero')->orderBy('numero','desc')->limit(1)->value('numero');
             $nuevoNumeroSerie = '00000001';
@@ -221,39 +217,10 @@ class ComprobanteController extends Controller
                 'id_tipo_pago_secundario' => $tipo_pago_secundario,
                 'pago_cliente_secundario' => $pago_secundario
             ]);
-
-            /*
-            // GENERA SESIONES POR PACIENTE
-            // **NO BORRAR**
-            $paciente_exists = true;
-            $paciente = Paciente::where('id_persona',$validatedComprobante['id_persona'])->get()->first();
-            \Log::info('check paciente',['paciente'=>$paciente]);
-            if($paciente == null)
-                $paciente_exists = false;
-            if($paciente_exists)
-            {
-                // Define si los historiales clinicos se pagaron o
-                // estan a deuda
-                $estado_pago = 0;
-                if( $validatedComprobante['deuda'] > 0 )
-                    $estado_pago = 2;
-                else if( $validatedComprobante['deuda'] == 0 )
-                    $estado_pago = 1;
-                $historial_paciente = HistoriaClinica::where([
-                    'id_paciente' => $paciente->id,
-                    'activo' => 1
-                ])->get();
-                $no_hay_activo = 1;
-                // Verifica que no haya algun paquete activo
-                // si lo hay, los siguientes paquetes desactivarlos
-                // se vuelven a activar una vez terminadas las
-                // sesiones del paquete actualmente activo
-                if( $historial_paciente->count() > 0 )
-                  $no_hay_activo = 0;
-            }*/
             
             // Crear detalles
             foreach ($validatedComprobante['detalles'] as $detalle) {
+                \Log::info("CHECK DETALLE",['detalle' => $detalle]);
                 DetalleComprobante::create([
                     'id_comprobante' => $comprobante->id,
                     'id_articulo' => $detalle['id_articulo'],
@@ -262,31 +229,6 @@ class ComprobanteController extends Controller
                     'descuento' => $detalle['descuento'] ?? 0,
                     'total_producto' => $detalle['total_producto'],
                 ]);
-            
-
-            /*
-            // GENERA HISTORIAL Y SESIONES
-            // **NO BORRAR**
-            if( $validatedComprobante['tipo'] == '2' && $paciente_exists )
-                {
-                    // Crear historial clinicas
-                    $articulo = Articulo::find($detalle['id_articulo']);
-                    // Genera uuid para agrupar las sesiones
-                    $uuid = bin2hex(random_bytes(16));
-                    for($i = 0; $i < $articulo['cantidad'];$i++)
-                    {
-                        HistoriaClinica::create([
-                            'id_paciente' => $paciente->id,
-                            'id_sede' => $validatedComprobante['id_sede'],
-                            'id_articulo' => $articulo->id,
-                            'estado_pago' => $estado_pago,
-                            'activo' => $no_hay_activo,
-                            'uuid' => $uuid,
-                            'id_comprobante' => $comprobante->id
-                        ]);
-                    }
-                    $no_hay_activo=0;
-            }*/
             }
 
             $voucherType = "constancia_pago_voucher";

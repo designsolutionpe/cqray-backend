@@ -107,7 +107,7 @@
                 </p>
                 <p>
                     <span style="font-weight: bold; letter-spacing: 1px;">Por concepto de: </span>
-                    <span>Adquisión de servicio</span>
+                    <span>____________________________________</span>
                 </p>
             </td>
         </tr>
