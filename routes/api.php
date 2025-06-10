@@ -24,6 +24,7 @@ use App\Http\Controllers\HistoriaClinicaController;
 use App\Http\Controllers\CategoriaArticuloController;
 use App\Http\Controllers\UnidadMedidaArticuloController;
 use App\Http\Controllers\EmpleadoController;
+use App\Http\Controllers\EstadisticasController;
 
 
 //Route::get('/sedes', [SedeController::class, 'index']);
@@ -156,6 +157,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/empleados/{empleado}','update');
     Route::delete('/empleados/{empleado}','destroy');
   });
+
+  Route::get('/statistics/dashboard',[EstadisticasController::class,'dashboard']);
 
 });
 

@@ -21,7 +21,11 @@ class ComprobanteService
      */
     public function handler($post,$stored)
     {
-        $paciente = Paciente::where('id_persona',$post['id_persona'])->first();
+        $paciente = Paciente::where(
+                        'id_persona',
+                        $post['id_persona']
+                    )->first();
+
         if(
             $post['tipo'] == "2" && // Servicio
             $paciente
@@ -37,25 +41,35 @@ class ComprobanteService
                     'id_paciente' => $paciente->id
                 ])->get();
 
-                $tieneActivos = $paquetes->contains(function ($paquete) {
-                    return $paquete->activo;
-                });
+                $tieneActivos = $paquetes->contains(
+                    fn ($paquete) => $paquete->activo
+                );
 
                 // Hay paquetes
                 if($paquetes->isNotEmpty())
                 {
                     // Filtra por detalle actual
-                    $paquete_detalle = $paquetes->filter(fn($p) => $p->id_articulo == $detalle['id_articulo']);
-                    $paquete_deuda = $paquete_detalle->where("estado_pago",2)->groupBy("uuid")->keys()->first();
+                    $paquete_detalle = $paquetes->filter(
+                        fn($p) => 
+                            $p->id_articulo == 
+                            $detalle['id_articulo']
+                    );
+                    $paquete_deuda = $paquete_detalle->where(
+                        "estado_pago" , 2
+                    )
+                    ->groupBy("uuid")->keys()->first();
                     // Verifica hay activos
-                    $paquete_activo = $paquete_detalle->contains(fn($p) => $p->activo );
+                    $paquete_activo = 
+                        $paquete_detalle->contains(
+                            fn($p) => $p->activo 
+                        );
 
                     if($paquete_deuda)
                     {
                         if($this->calcularDeuda(
                             $stored['deuda'],
                             $post['pago_cliente'],
-                            $post['pago_cliente_secundario']
+                            $post['pago_cliente_secundario'] ?? 0
                         ))
                         {
                             HistoriaClinica::where("uuid",$paquete_deuda)->update(["estado_pago"=>1]);
@@ -68,7 +82,7 @@ class ComprobanteService
                         $estado_pago = $this->calcularDeuda(
                             $post['total'],
                             $post['pago_cliente'],
-                            $post['pago_cliente_secundario']
+                            $post['pago_cliente_secundario'] ?? 0
                         ) ? 1 : 2;
 
                         $this->generarPaquetes(

@@ -31,7 +31,7 @@ class ComprobanteController extends Controller
     public function index()
     {
         $comprobantes = Comprobante::with(['persona', 'sede', 'detalles.articulo'])
-        ->orderBy('fecha_emision', 'desc')
+        //->orderBy('fecha_emision', 'desc')
         ->get();
 
         return ComprobanteResource::collection($comprobantes)
@@ -43,9 +43,12 @@ class ComprobanteController extends Controller
     {
       $sede = $request->query("id_sede");
       if(isset($sede))
-        return response()->json(Comprobante::where("id_sede",$sede)->get()->count(),200);
+      {
+          $counted = Comprobante::where("id_sede",$sede)->get()->count();
+          return $this->successResponse($counted);
+      }
       else
-        return response()->json(Comprobante::all()->count(),200);
+        return $this->successResponse(Comprobante::all()->count());
     }
 
     public function getLastItem()
@@ -53,7 +56,7 @@ class ComprobanteController extends Controller
         $comp = Comprobante::all()->sortByDesc(function($item){
             return (int) $item->numero;
         })->first();
-        return response()->json($comp,200);
+        return $this->successResponse($comp);
     }
 
     public function searchComprobantes(Request $request)
@@ -178,6 +181,8 @@ class ComprobanteController extends Controller
                 'detalles.*.descuento' => 'nullable|numeric',
                 'detalles.*.total_producto' => 'required|numeric',
             ]);
+
+            //\Log::info("CHECK CLIENTE PAGO SEC",["pago"=>$validatedComprobante['pago_cliente_secundario']]);
             
             // $this->comprobanteService->handler($validatedComprobante);
 
@@ -189,6 +194,9 @@ class ComprobanteController extends Controller
                 $nuevoNumero = (int) $ultimoNumeroSerie + 1;
                 $nuevoNumeroSerie = str_pad($nuevoNumero, strlen($ultimoNumeroSerie),'0',STR_PAD_LEFT);
             }
+
+            $tipo_pago_secundario = array_key_exists('id_tipo_pago_secundario',$validatedComprobante) ? $validatedComprobante['id_tipo_pago_secundario'] : null;
+            $pago_secundario = array_key_exists('pago_cliente_secundario',$validatedComprobante) ? $validatedComprobante['pago_cliente_secundario'] : null;
 
             // Crear comprobante
             $comprobante = Comprobante::create([
@@ -210,8 +218,8 @@ class ComprobanteController extends Controller
                 'pago_cliente' => $validatedComprobante['pago_cliente'],
                 'vuelto' => $validatedComprobante['vuelto'],
                 'deuda' => $validatedComprobante['deuda'],
-                'id_tipo_pago_secundario' => $validatedComprobante['id_tipo_pago_secundario'] ?? null,
-                'pago_cliente_secundario' => $validatedComprobante['pago_cliente_secundario'] ?? null
+                'id_tipo_pago_secundario' => $tipo_pago_secundario,
+                'pago_cliente_secundario' => $pago_secundario
             ]);
 
             /*
@@ -330,7 +338,8 @@ class ComprobanteController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'error' => 'Error al registrar comprobante: ' . $e->getMessage()
+                'error' => 'Error al registrar comprobante: ' . $e->getMessage(),
+                'debug' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)
             ], 500);
         }
     }
