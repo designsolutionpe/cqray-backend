@@ -14,7 +14,7 @@ class CajaChicaController extends Controller
     public function index(Request $request)
     {
         //
-        $items = CajaChica::with(['sede']);
+        $items = CajaChica::with(['sede','comprobante:id,fecha_anulado']);
 
         if($request->filled("sede"))
             $items->where("id_sede",$request->query("sede"));

@@ -16,11 +16,17 @@ class CajaChica extends Model
         'fecha',
         'flg_inicial',
         'flg_terminal',
-        'motivo'
+        'motivo',
+        'id_comprobante'
     ];
 
     public function sede()
     {
         return $this->belongsTo(Sede::class,'id_sede');
+    }
+
+    public function comprobante()
+    {
+        return $this->belongsTo(Comprobante::class,'id_comprobante');
     }
 }

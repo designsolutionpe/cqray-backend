@@ -52,7 +52,8 @@ class ComprobanteResource extends JsonResource
                     'total_producto' => $detalle->total_producto,
                 ];
             }),
-            'voucher_url' => $this->voucher_url
+            'voucher_url' => $this->voucher_url,
+            'fecha_anulado' => $this->fecha_anulado
 
         ];
     }

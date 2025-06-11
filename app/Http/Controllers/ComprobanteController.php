@@ -265,7 +265,8 @@ class ComprobanteController extends Controller
                 'balance' => $comprobante['total'],
                 'id_sede' => $validatedComprobante['id_sede'],
                 'fecha' => $validatedComprobante['fecha_emision'],
-                'motivo' => 'Venta'
+                'motivo' => 'Venta',
+                'id_comprobante' => $comprobante->id
             ]);
 
             DB::commit();
