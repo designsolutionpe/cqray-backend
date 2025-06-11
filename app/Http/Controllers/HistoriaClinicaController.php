@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Paciente;
+use App\Models\Cita;
 use Illuminate\Http\Request;
 use App\Models\HistoriaClinica;
 use Illuminate\Support\Facades\DB;
@@ -80,8 +81,13 @@ class HistoriaClinicaController extends Controller
                 "id_cita" => "required|integer|exists:citas,id",
             ]);
 
+            $cita = Cita::find($validated['id_cita']);
+
             $historiaClinica->id_cita = $validated["id_cita"];
             $historiaClinica->save();
+
+            $cita['id_historia_link'] = $historiaClinica->id;
+            $cita->save();
 
             \Log::info("check link w/ cita",["id_cita"=> $validated,"id_reg"=>$historiaClinica]);
 

@@ -64,15 +64,44 @@ class ComprobanteService
                             fn($p) => $p->activo 
                         );
 
-                    if($paquete_deuda)
+                    if($paquete_deuda && !empty($paciente->id_articulo_deuda) && $paciente->id_articulo_deuda == $detalle['id_articulo'])
                     {
-                        if($this->calcularDeuda(
-                            $stored['deuda'],
+                        \Log::info(
+                            "PAQUETE EN DEUDA",
+                            [
+                                'deuda' => $paciente->deuda,
+                                'principal' => $post['pago_cliente'],
+                                'secundario' => $post['pago_cliente_secundario'] ?? 0,
+                                'resultado' => 
+                                $this->saldoDeuda(
+                                    $paciente->deuda / 100,
+                                    $post['pago_cliente'],
+                                    $post['pago_cliente_secundario'] ?? 0
+                                )
+                            ]
+                        );
+                        if($this->saldoDeuda(
+                            $paciente->deuda / 100,
                             $post['pago_cliente'],
                             $post['pago_cliente_secundario'] ?? 0
                         ))
                         {
                             HistoriaClinica::where("uuid",$paquete_deuda)->update(["estado_pago"=>1]);
+                            $paciente['deuda'] = null;
+                            $paciente['id_articulo_deuda'] = null;
+                            $paciente->save();
+                            continue;
+                        }
+                        else
+                        {
+                            $paciente['deuda'] = $this->calcularDeuda(
+                                $paciente->deuda / 100,
+                                $post['pago_cliente'],
+                                $post['pago_cliente_secundario'] ?? 0
+                            );
+                            $paciente['id_articulo_deuda'] = $detalle['id_articulo'];
+                            $paciente->save();
+                            \Log::info("deuda actualizada",["paciente" => $paciente]);
                             continue;
                         }
                     }
@@ -80,8 +109,8 @@ class ComprobanteService
                     {
                         \Log::info("CHECK ARTICULO",['arti' => $detalle]);
                         $articulo = Articulo::find($detalle['id_articulo']);
-                        $estado_pago = $this->calcularDeuda(
-                            $stored['deuda'],
+                        $estado_pago = $this->saldoDeuda(
+                            $stored['total'],
                             $post['pago_cliente'],
                             $post['pago_cliente_secundario'] ?? 0
                         ) ? 1 : 2;
@@ -92,9 +121,20 @@ class ComprobanteService
                             $post['id_sede'],
                             $stored->id,
                             $estado_pago,
-                            $paquete_activo ? 0 : 1,
+                            $tieneActivos ? 0 : 1,
                             $articulo->cantidad
                         );
+
+                        if($estado_pago == 2)
+                        {
+                            $paciente['deuda'] = $this->calcularDeuda(
+                                $stored['total'],
+                                $post['pago_cliente'],
+                                $post['pago_cliente_secundario'] ?? 0
+                            );
+                            $paciente['id_articulo_deuda'] = $articulo->id;
+                            $paciente->save();
+                        }
                     }
                     // Guarda paquete en modo inactivo
                 }
@@ -102,7 +142,7 @@ class ComprobanteService
                 else
                 {
                     $articulo = Articulo::find($detalle['id_articulo']);
-                    $estado_pago = $this->calcularDeuda(
+                    $estado_pago = $this->saldoDeuda(
                         $post['total'],
                         $post['pago_cliente'],
                         $post['pago_cliente_secundario'] ?? 0
@@ -117,6 +157,17 @@ class ComprobanteService
                         1,
                         $articulo->cantidad
                     );
+
+                    if($estado_pago == 2)
+                    {
+                        $paciente['deuda'] = $this->calcularDeuda(
+                            $post['total'],
+                            $post['pago_cliente'],
+                            $post['pago_cliente_secundario'] ?? 0
+                        );
+                        $paciente['id_articulo_deuda'] = $articulo->id;
+                        $paciente->save();
+                    }
                 }
             }
         }
@@ -128,8 +179,15 @@ class ComprobanteService
         $pago_pr = MonedaHelper::convertirDineroAEntero($pago_pr);
         $pago_sc = MonedaHelper::convertirDineroAEntero($pago_sc);
         $total = $pago_pr + $pago_sc;
-        \Log::info("CALCULAR DEUDA8",["total"=>$total,"deuda"=>$deuda]);
-        return ($total >= abs($deuda));
+        $resultado = abs($deuda) - $total;
+        \Log::info("CALCULAR DEUDA",['total'=>$total,'deuda'=>$deuda,'resultado' => $resultado]);
+        return $resultado > 0 ? $resultado : 0;
+    }
+
+    protected function saldoDeuda($deuda,$pago_pr,$pago_sc)
+    {
+        $calculo = $this->calcularDeuda($deuda,$pago_pr,$pago_sc);
+        return ($calculo <= 0);
     }
 
     /**

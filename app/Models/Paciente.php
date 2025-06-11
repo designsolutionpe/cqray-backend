@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Sede;
 use App\Models\Persona;
 use App\Models\HistoriaClinica;
+use App\Models\Articulo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -17,7 +18,9 @@ class Paciente extends Model
         'id_persona', 
         'id_sede', 
         'historia_clinica',
-        'estado'
+        'estado',
+        'deuda',
+        'id_articulo_deuda'
     ];
 
     public function persona()
@@ -43,6 +46,11 @@ class Paciente extends Model
     public function historial_clinico()
     {
         return $this->hasMany(HistoriaClinica::class,'id_paciente');
+    }
+
+    public function articulo_deuda()
+    {
+        return $this->belongsTo(Articulo::class,'id_articulo_deuda');
     }
 
     /*

@@ -115,16 +115,18 @@ class ComprobanteController extends Controller
             \Log::info("CHECK PACIENTE",["paciente"=>$paciente]);
             if(!$paciente) return $this->errorResponse("No se ha encontrado a la persona",404);
 
-            $deuda = HistoriaClinica::with("comprobante:id,deuda")->where([
+            $deuda = HistoriaClinica::with("paciente:id,deuda")
+            ->where([
                 'id_paciente' => $paciente->id,
                 'estado_pago' => 2
             ])
             ->get()
             ->unique("uuid")
             ->map( function ($item) {
+                \Log::info("VERIFY DEDUA",['item paciente' => $item->paciente]);
                 return [
                     'id_articulo' => $item->id_articulo,
-                    'deuda' => $item->comprobante?->deuda ?? 0
+                    'deuda' => $item->paciente->deuda / 100 ?? 0
                 ];
             })
             ->values();

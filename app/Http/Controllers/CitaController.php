@@ -45,7 +45,7 @@ class CitaController extends Controller
             'paciente.persona',
             'paciente.estado',
             'sede'
-        ]);
+        ])->where('id_historia_link',null);
 
         $items->where('id_sede',$request->query("sede"));
         $items->where('id_paciente',$request->query('paciente'));
