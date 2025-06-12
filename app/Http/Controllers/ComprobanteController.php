@@ -260,9 +260,13 @@ class ComprobanteController extends Controller
             $comprobante["voucher_url"] = $url;
             $comprobante->save();
 
+            $pago_cliente = MonedaHelper::convertirDineroAEntero($comprobante->pago_cliente);
+            $pago_secundario = MonedaHelper::convertirDineroAEntero($comprobante->pago_cliente_secundario);
+            $pago_total = ($pago_cliente + $pago_secundario) / 100;
+
             CajaChica::create([
                 'tipo' => 'Ingreso',
-                'balance' => $comprobante['total'],
+                'balance' => $pago_total,
                 'id_sede' => $validatedComprobante['id_sede'],
                 'fecha' => $validatedComprobante['fecha_emision'],
                 'motivo' => 'Venta',

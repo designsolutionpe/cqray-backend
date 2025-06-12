@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CajaChica;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class CajaChicaController extends Controller
 {
@@ -20,10 +21,28 @@ class CajaChicaController extends Controller
             $items->where("id_sede",$request->query("sede"));
 
         if($request->filled("tipo"))
-            $items->where("tipo",$request->query("tipo"));
+          $items->where("tipo",$request->query("tipo"));
 
-        if($request->filled("fecha"))
-            $items->where("fecha",$request->query("fecha"));
+        if($request->filled("tipo_fecha"))
+        {
+          switch($request->query("tipo_fecha"))
+          {
+          case "Diario":
+              $fecha = Carbon::createFromTimestamp($request->query("fecha") / 1000);
+              $items->whereDate("fecha",$fecha);
+              break;
+          case "Semanal":
+              $rango = explode("-",$request->query("fecha"));
+              $fecha_inicio = Carbon::createFromTimestamp((int)$rango[0] / 1000);
+              $fecha_fin = Carbon::createFromTimestamp((int)$rango[1] / 1000);
+              $items->whereBetween("fecha",[$fecha_inicio,$fecha_fin]);
+              break;
+          case "Mensual":
+              $mes = Carbon::createFromTimestamp($request->query("fecha") / 1000);
+              $items->whereMonth("fecha",$mes);
+              break;
+          }
+        }
 
         $result = $items->orderBy('id','desc')->get();
 
