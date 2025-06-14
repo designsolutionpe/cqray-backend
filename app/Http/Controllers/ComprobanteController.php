@@ -15,6 +15,7 @@ use Illuminate\Validation\Rule;
 use App\Models\DetalleComprobante;
 use Illuminate\Support\Facades\DB;
 use App\Services\ComprobanteService;
+use App\Helpers\MonedaHelper;
 use App\Http\Resources\ComprobanteResource;
 
 class ComprobanteController extends Controller
@@ -28,10 +29,12 @@ class ComprobanteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $comprobantes = Comprobante::with(['persona', 'sede', 'detalles.articulo'])
-        //->orderBy('fecha_emision', 'desc')
+            //->orderBy('fecha_emision', 'desc')
+            ->where("id_sede",$request->query("sede"))
+        ->orderBy('fecha_emision','asc')
         ->get();
 
         return ComprobanteResource::collection($comprobantes)
@@ -176,6 +179,7 @@ class ComprobanteController extends Controller
                 'deuda' => 'required|numeric',
                 'id_tipo_pago_secundario' => 'nullable|integer|exists:tipo_pagos,id',
                 'pago_cliente_secundario' => 'nullable|numeric',
+                'regularizacion' => 'nullable|boolean',
                 'detalles' => 'required|array|min:1',
                 'detalles.*.id_articulo' => 'required|exists:articulos,id',
                 'detalles.*.cantidad' => 'required|numeric|min:1',
@@ -261,15 +265,17 @@ class ComprobanteController extends Controller
             $comprobante->save();
 
             $pago_cliente = MonedaHelper::convertirDineroAEntero($comprobante->pago_cliente);
-            $pago_secundario = MonedaHelper::convertirDineroAEntero($comprobante->pago_cliente_secundario);
+            $pago_secundario = MonedaHelper::convertirDineroAEntero($comprobante->pago_cliente_secundario ?? 0);
             $pago_total = ($pago_cliente + $pago_secundario) / 100;
+
+            $motivo = array_key_exists("regularizacion",$validatedComprobante) ? $validatedComprobante['regularizacion'] : false;
 
             CajaChica::create([
                 'tipo' => 'Ingreso',
                 'balance' => $pago_total,
                 'id_sede' => $validatedComprobante['id_sede'],
                 'fecha' => $validatedComprobante['fecha_emision'],
-                'motivo' => 'Venta',
+                'motivo' => $motivo ? 'Regularización de Venta' : 'Venta',
                 'id_comprobante' => $comprobante->id
             ]);
 
