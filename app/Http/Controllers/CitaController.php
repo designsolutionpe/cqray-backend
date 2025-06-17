@@ -34,7 +34,9 @@ class CitaController extends Controller
             'usuario.sede'
         ]);
 
-        $result = $items->orderBy('fecha_cita','desc')->get();
+        $result = $items->orderBy('fecha_cita','desc')
+                        ->orderBy('hora_cita','desc')
+                        ->get();
 
         return response()->json($result,200);
     }
@@ -258,6 +260,15 @@ class CitaController extends Controller
                 }
             }
 
+            // Actualiza el estado del paciente si en caso no es el mismo
+            $paciente = Paciente::find($validatedCita['id_paciente']);
+
+            if($paciente->estado != $validatedCita['tipo_paciente'])
+            {
+                $paciente['estado'] = $validatedCita['tipo_paciente'];
+                $paciente->save();
+            }
+
             DB::commit();
 
             return response()->json([
@@ -311,7 +322,12 @@ class CitaController extends Controller
             ]);
 
             // Actualizar la cita
-            $cita->update($validatedCita);
+            $cita->update([
+                'fecha_cita' => $validatedCita['fecha_cita'],
+                'hora_cita' => $validatedCita['hora_cita'],
+                'estado' => $validatedCita['estado'],
+                'observaciones' => $validatedCita['observaciones']
+            ]);
 
             // Verifica si el paquete actual se desactiva o no
             $historias = HistoriaClinica::with(['cita'])->where([
@@ -378,6 +394,14 @@ class CitaController extends Controller
                         }
                     }
                 }
+            }
+
+            $paciente = Paciente::find($validatedCita['id_paciente']);
+
+            if($paciente->estado != $validatedCita['tipo_paciente'])
+            {
+                $paciente['estado'] = $validatedCita['tipo_paciente'];
+                $paciente->save();
             }
 
             DB::commit();
