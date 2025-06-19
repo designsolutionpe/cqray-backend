@@ -31,13 +31,15 @@ class ComprobanteController extends Controller
      */
     public function index(Request $request)
     {
-        $comprobantes = Comprobante::with(['persona', 'sede', 'detalles.articulo'])
+        $comprobantes = Comprobante::with(['persona', 'sede', 'detalles.articulo']);
             //->orderBy('fecha_emision', 'desc')
-            ->where("id_sede",$request->query("sede"))
-        ->orderBy('fecha_emision','asc')
-        ->get();
 
-        return ComprobanteResource::collection($comprobantes)
+        if($request->filled('sede'))
+            $comprobantes->where("id_sede",$request->query("sede"));
+        
+        $comprobantes->orderBy('fecha_emision','asc');
+
+        return ComprobanteResource::collection($comprobantes->get())
         ->response()
         ->setStatusCode(200);
     }

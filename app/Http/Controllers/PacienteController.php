@@ -98,7 +98,19 @@ class PacienteController extends Controller
         DB::beginTransaction();
         try
         {
-            $obj = $paciente->load(['persona','persona.comprobantes','historial_clinico','historial_clinico.sede','historial_clinico.paquete','historial_clinico.cita','sede','citas','estado','citas.sede','citas.estado']);
+            $obj = $paciente->load([
+                'persona',
+                'persona.comprobantes',
+                'historial_clinico',
+                'historial_clinico.sede',
+                'historial_clinico.paquete',
+                'historial_clinico.cita',
+                'sede',
+                'citas',
+                'estado',
+                'citas.sede',
+                'citas.estado'
+            ]);
             
             $paciente_created = [
                 "titulo" => "Paciente Creado",
@@ -116,7 +128,15 @@ class PacienteController extends Controller
                 ];
             }, $citas);
 
+            $paquete_activo = $paciente->historial_clinico->filter(
+                fn($a) => $a->activo
+            )->groupBy('uuid')->first();
+            
+            $obj['historial_servicios'] = $paciente->historial_clinico->groupBY('uuid')->values();
+
             $obj['events'] = array_merge([],[$paciente_created],$citas_evento);
+
+            $obj['paquete_activo'] = $paquete_activo->first();
 
             return response()->json($obj,200);
         }
