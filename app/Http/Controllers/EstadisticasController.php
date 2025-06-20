@@ -14,7 +14,7 @@ class EstadisticasController extends Controller
      */
     public function dashboard()
     {
-        $stats = CajaChica::selectRaw("DATE_FORMAT(fecha,'%M') as mes, SUM(balance) as total")
+        $stats = CajaChica::selectRaw("DATE_FORMAT('fecha','%M') as mes, SUM(balance) as total")
             ->whereYear('fecha',2025)
             ->groupByRaw('MONTH("fecha")')
             ->orderByRaw('MONTH("fecha")')

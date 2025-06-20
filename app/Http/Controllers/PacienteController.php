@@ -136,7 +136,10 @@ class PacienteController extends Controller
 
             $obj['events'] = array_merge([],[$paciente_created],$citas_evento);
 
-            $obj['paquete_activo'] = $paquete_activo->first();
+            if(!empty($paquete_activo))
+                $obj['paquete_activo'] = $paquete_activo->first();
+            else
+                $obj['paquete_activo'] = [];
 
             return response()->json($obj,200);
         }
