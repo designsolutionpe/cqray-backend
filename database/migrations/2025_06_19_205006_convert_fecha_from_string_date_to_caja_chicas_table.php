@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('caja_chicas', function (Blueprint $table) {
             //
-            $table->date('fecha')->change();
+            $table->datetime('fecha')->change();
         });
     }
 

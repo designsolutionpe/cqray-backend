@@ -67,6 +67,8 @@ class CajaChicaController extends Controller
                 'motivo' => 'required|string'
             ]);
 
+            $validated['fecha'] = Carbon::parse($validated['fecha'])->format('Y-m-d H:i:s');
+
             $item = CajaChica::create($validated);
             DB::commit();
             return response()->json($item,201);
