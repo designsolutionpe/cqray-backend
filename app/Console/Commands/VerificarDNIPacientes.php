@@ -30,8 +30,8 @@ class VerificarDNIPacientes extends Command
     public function handle()
     {
         $personas = Persona::where('tipo_documento','DNI')
-                            ->whereRaw('LENGTH(numero_documento) <> 8')
-                            ->whereRaw('LENGTH(numero_documento) < 8')
+                            //->whereRaw('LENGTH(numero_documento) <> 8')
+                            //->whereRaw('LENGTH(numero_documento) < 8')
                             ->get();
         $contenido = "";
         $contenido .= "ID|DNI|NOMBRE BD|NOMBRE RENIEC|OK|ERROR LOG" . PHP_EOL;

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Models\Comprobante;
 
 class PacienteController extends Controller
 {
@@ -140,6 +141,11 @@ class PacienteController extends Controller
                 $obj['paquete_activo'] = $paquete_activo->first();
             else
                 $obj['paquete_activo'] = [];
+
+            // Documentos
+            $documentos = Comprobante::where("id_persona",$paciente->id_persona)->get("voucher_url")->values();
+
+            $obj["documentos"] = $documentos;
 
             return response()->json($obj,200);
         }
