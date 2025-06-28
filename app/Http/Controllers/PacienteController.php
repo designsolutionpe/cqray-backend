@@ -143,7 +143,7 @@ class PacienteController extends Controller
                 $obj['paquete_activo'] = [];
 
             // Documentos
-            $documentos = Comprobante::where("id_persona",$paciente->id_persona)->get("voucher_url")->values();
+            $documentos = Comprobante::where("id_persona",$paciente->id_persona)->get(["voucher_url","fecha_emision"]);
 
             $obj["documentos"] = $documentos;
 

@@ -44,7 +44,18 @@ class CajaChicaController extends Controller
           }
         }
 
-        $result = $items->orderBy('id','desc')->get();
+        $result = [];
+        $result['data'] = $items->orderBy('fecha','desc')->get();
+        $result['count'] = $items->get()
+            ->filter(fn($i) => $i->comprobante !== null)
+            ->groupBy(fn($i) => $i->comprobante?->tipo_pago?->nombre)
+            ->filter(fn($gr,$n) => $n !== null)
+            ->map(function($items, $nombre) {
+            return [
+                'nombre' => $nombre,
+                'suma_balance' => $items->sum(fn($i) => (float) $i['balance'])
+            ];
+        })->values();
 
         return response()->json($result,200);
     }
